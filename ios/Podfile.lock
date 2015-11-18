@@ -1,0 +1,24 @@
+PODS:
+  - DXPhotoBrowser (0.1.4)
+  - DXPhotoBrowser-DXSimplePhoto (0.1.1):
+    - DXPhotoBrowser (~> 0.1.0)
+    - SDWebImage (~> 3.7)
+  - DXRefresh (0.1.0)
+  - pop (1.0.8)
+  - SDWebImage (3.7.3):
+    - SDWebImage/Core (= 3.7.3)
+  - SDWebImage/Core (3.7.3)
+
+DEPENDENCIES:
+  - DXPhotoBrowser-DXSimplePhoto
+  - DXRefresh
+  - POP
+
+SPEC CHECKSUMS:
+  DXPhotoBrowser: bc1213d28e9a37e09fa9c9e089cb4f0378547b5d
+  DXPhotoBrowser-DXSimplePhoto: a55f7131af8b28a27ca713bb56163f8a172cdc71
+  DXRefresh: e024cf66d86adb146e393481f894099b89480ca7
+  pop: 33ef7afe61c559586cc5a95a3f0bf2238dbee157
+  SDWebImage: 759e3ea2db01b0db3ac2189173f0e1e9f2e2612b
+
+COCOAPODS: 0.35.0

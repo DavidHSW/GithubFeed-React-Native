@@ -1,0 +1,17 @@
+{
+  "name": "RN_CNNode",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node_modules/react-native/packager/packager.sh"
+  },
+  "dependencies": {
+    "events": "^1.1.0",
+    "query-string": "^3.0.0",
+    "react-native": "0.15.0-rc",
+    "react-native-autocomplete": "^0.1.1",
+    "react-refresh-control": "^2.0.5",
+    "underscore": "^1.8.3",
+    "url": "^0.11.0"
+  }
+}
