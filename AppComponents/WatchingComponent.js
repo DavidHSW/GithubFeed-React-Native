@@ -1,6 +1,5 @@
 const React = require('react-native');
 const DXTextMenu = require('../iosComponents/DXTextMenu');
-const GHService = require('../networkService/GithubServices');
 const LoginComponent = require('./LoginComponent');
 const LoginMixin = require('./LoginMixin');
 

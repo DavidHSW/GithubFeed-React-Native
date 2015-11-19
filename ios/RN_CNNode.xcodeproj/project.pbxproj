@@ -31,6 +31,7 @@
 		BE6A49221BD766A90012C18A /* DXTopMessageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6A49211BD766A90012C18A /* DXTopMessageManager.m */; };
 		BE95BCAC1BD8E7F300B69DD1 /* NativePlayViewControllr.m in Sources */ = {isa = PBXBuildFile; fileRef = BE95BCAB1BD8E7F300B69DD1 /* NativePlayViewControllr.m */; };
 		BE95BCC21BD9F9C300B69DD1 /* DXTextCategoryMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = BE95BCC11BD9F9C300B69DD1 /* DXTextCategoryMenu.m */; };
+		BEF368901BFC736D003DF66C /* DXRNUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF3688F1BFC736D003DF66C /* DXRNUtils.m */; };
 		CAB811B981DA26E2A433577E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B0A9B6DB06C486519294E4B9 /* libPods.a */; };
 /* End PBXBuildFile section */
 
@@ -153,16 +154,18 @@
 		BE29C36B1BD6637F00EAC526 /* DXRefreshControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DXRefreshControl.m; sourceTree = "<group>"; };
 		BE5E81681BCDF67C00BA8AB4 /* DXPopover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DXPopover.h; sourceTree = "<group>"; };
 		BE5E81691BCDF67C00BA8AB4 /* DXPopover.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DXPopover.m; sourceTree = "<group>"; };
-		BE67C3B81BDDC0750009BC40 /* DXCategoryMenuManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DXCategoryMenuManager.h; path = ../DXCategoryMenuManager.h; sourceTree = "<group>"; };
-		BE67C3B91BDDC0750009BC40 /* DXCategoryMenuManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DXCategoryMenuManager.m; path = ../DXCategoryMenuManager.m; sourceTree = "<group>"; };
+		BE67C3B81BDDC0750009BC40 /* DXCategoryMenuManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DXCategoryMenuManager.h; sourceTree = "<group>"; };
+		BE67C3B91BDDC0750009BC40 /* DXCategoryMenuManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DXCategoryMenuManager.m; sourceTree = "<group>"; };
 		BE6A49111BD7667B0012C18A /* UIView+TopBarMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+TopBarMessage.h"; sourceTree = "<group>"; };
 		BE6A49121BD7667B0012C18A /* UIView+TopBarMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+TopBarMessage.m"; sourceTree = "<group>"; };
 		BE6A49201BD766A90012C18A /* DXTopMessageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DXTopMessageManager.h; sourceTree = "<group>"; };
 		BE6A49211BD766A90012C18A /* DXTopMessageManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DXTopMessageManager.m; sourceTree = "<group>"; };
 		BE95BCAA1BD8E7F300B69DD1 /* NativePlayViewControllr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativePlayViewControllr.h; sourceTree = "<group>"; };
 		BE95BCAB1BD8E7F300B69DD1 /* NativePlayViewControllr.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NativePlayViewControllr.m; sourceTree = "<group>"; };
-		BE95BCC01BD9F9C300B69DD1 /* DXTextCategoryMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DXTextCategoryMenu.h; sourceTree = "<group>"; };
-		BE95BCC11BD9F9C300B69DD1 /* DXTextCategoryMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DXTextCategoryMenu.m; sourceTree = "<group>"; };
+		BE95BCC01BD9F9C300B69DD1 /* DXTextCategoryMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DXTextCategoryMenu.h; path = NavigationCategory/DXTextCategoryMenu.h; sourceTree = "<group>"; };
+		BE95BCC11BD9F9C300B69DD1 /* DXTextCategoryMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DXTextCategoryMenu.m; path = NavigationCategory/DXTextCategoryMenu.m; sourceTree = "<group>"; };
+		BEF3688E1BFC736D003DF66C /* DXRNUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DXRNUtils.h; sourceTree = "<group>"; };
+		BEF3688F1BFC736D003DF66C /* DXRNUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DXRNUtils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -379,36 +382,29 @@
 			isa = PBXGroup;
 			children = (
 				BE95BCAD1BD8E96500B69DD1 /* BridgeNativeClass */,
-				BE95BC901BD8D9C300B69DD1 /* CategoryMenu */,
-				BE5E81681BCDF67C00BA8AB4 /* DXPopover.h */,
-				BE5E81691BCDF67C00BA8AB4 /* DXPopover.m */,
-				BE29C35D1BD6296100EAC526 /* PopoverManager.h */,
-				BE29C35E1BD6296100EAC526 /* PopoverManager.m */,
-				BE6A49111BD7667B0012C18A /* UIView+TopBarMessage.h */,
-				BE6A49121BD7667B0012C18A /* UIView+TopBarMessage.m */,
 			);
 			path = Classes;
-			sourceTree = "<group>";
-		};
-		BE95BC901BD8D9C300B69DD1 /* CategoryMenu */ = {
-			isa = PBXGroup;
-			children = (
-				BE95BCC01BD9F9C300B69DD1 /* DXTextCategoryMenu.h */,
-				BE95BCC11BD9F9C300B69DD1 /* DXTextCategoryMenu.m */,
-				BE67C3B81BDDC0750009BC40 /* DXCategoryMenuManager.h */,
-				BE67C3B91BDDC0750009BC40 /* DXCategoryMenuManager.m */,
-			);
-			name = CategoryMenu;
-			path = NavigationCategory;
 			sourceTree = "<group>";
 		};
 		BE95BCAD1BD8E96500B69DD1 /* BridgeNativeClass */ = {
 			isa = PBXGroup;
 			children = (
+				BEF3688E1BFC736D003DF66C /* DXRNUtils.h */,
+				BEF3688F1BFC736D003DF66C /* DXRNUtils.m */,
 				BE29C36A1BD6637F00EAC526 /* DXRefreshControl.h */,
 				BE29C36B1BD6637F00EAC526 /* DXRefreshControl.m */,
+				BE6A49111BD7667B0012C18A /* UIView+TopBarMessage.h */,
+				BE6A49121BD7667B0012C18A /* UIView+TopBarMessage.m */,
 				BE6A49201BD766A90012C18A /* DXTopMessageManager.h */,
 				BE6A49211BD766A90012C18A /* DXTopMessageManager.m */,
+				BE95BCC01BD9F9C300B69DD1 /* DXTextCategoryMenu.h */,
+				BE95BCC11BD9F9C300B69DD1 /* DXTextCategoryMenu.m */,
+				BE67C3B81BDDC0750009BC40 /* DXCategoryMenuManager.h */,
+				BE67C3B91BDDC0750009BC40 /* DXCategoryMenuManager.m */,
+				BE5E81681BCDF67C00BA8AB4 /* DXPopover.h */,
+				BE5E81691BCDF67C00BA8AB4 /* DXPopover.m */,
+				BE29C35D1BD6296100EAC526 /* PopoverManager.h */,
+				BE29C35E1BD6296100EAC526 /* PopoverManager.m */,
 			);
 			name = BridgeNativeClass;
 			sourceTree = "<group>";
@@ -678,6 +674,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEF368901BFC736D003DF66C /* DXRNUtils.m in Sources */,
 				BE95BCAC1BD8E7F300B69DD1 /* NativePlayViewControllr.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				BE29C35F1BD6296100EAC526 /* PopoverManager.m in Sources */,

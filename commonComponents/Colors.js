@@ -11,6 +11,8 @@ const colors = {
 	red: processColor('#f61d4b'),
 	backWhite: processColor('#F2F2F2'),
 	textGold: processColor('#BC7233'),
+	borderColor: processColor('#E2E2E2'),
+	black: processColor('#586872'),
 }
 
 module.exports = colors;
