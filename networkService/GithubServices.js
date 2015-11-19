@@ -123,8 +123,8 @@ class GithubService extends EventEmitter {
         .catch(err => {
           console.log('logout err is: ' + err);
         })
-      GLOBAL_TOKEN = EMPTY_TOKEN;
-      AsyncStorage.removeItem(GH_ACCESSTOKEN_KEY);
+      GLOBAL_USER = EMPTY_USER;
+      AsyncStorage.removeItem(GH_USER_KEY);
       DXUtils.clearCookie();
       resolve(null);
     });
@@ -132,7 +132,7 @@ class GithubService extends EventEmitter {
 
   tokenHeader() {
     const tokenHeader = {
-      'Authorization': 'token ' + GLOBAL_TOKEN.token,
+      'Authorization': 'token ' + GLOBAL_USER.tokenInfo.token,
       'User-Agent': config.userAgent
     }
 
