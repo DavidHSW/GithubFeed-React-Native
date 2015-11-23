@@ -4,6 +4,7 @@ const DXRefreshControl = require('../iosComponents/DXRefreshControl');
 const DXTopMessage = require('../iosComponents/DXTopMessage');
 const Config = require('../config');
 const PropTypes = React.PropTypes;
+const GHService = require('../networkService/GithubServices');
 
 const {
   ListView,
@@ -55,12 +56,15 @@ const FloorListView = React.createClass({
     const reloadPromise = this.props.reloadPromise();
     reloadPromise
       .then(value => {
+        console.log('Refresh listView response is: ' + JSON.stringify(value));
+        GHService.checkError(value);
+
         const rdata = this.props.handleReloadData(value);
         this._setNeedsRenderList(rdata);
       })
-      .catch(err => {
-        this.showError(err);
-      })
+      // .catch(err => {
+      //   this.showError(err);
+      // })
       .done(() => {
         const node = this.refs[LISTVIEWREF];
         if (node) {
@@ -76,6 +80,8 @@ const FloorListView = React.createClass({
     const appendPromise = this.props.appendPromise();
     appendPromise
      .then(value => {
+       GHService.checkError(value);
+
        const rdata = this.props.handleAppendData(value);
        this._setNeedsRenderList(rdata);
      })

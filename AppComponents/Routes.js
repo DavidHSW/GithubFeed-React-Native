@@ -26,6 +26,13 @@ class Routes {
 			title: 'me'
 		}
 	}
+
+	static repo(repo) {
+		return {
+			component: require('./RepoComponent'),
+			title: repo.name
+		}
+	}
 }
 
 module.exports = Routes;

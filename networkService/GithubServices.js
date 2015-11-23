@@ -167,6 +167,16 @@ class GithubService extends EventEmitter {
     )
   }
 
+  checkError(res) {
+    const status = res.status;
+    console.log('res status is: ' + status);
+    const body = JSON.parse(res._bodyInit);
+
+    if (status >= 300) {
+      throw new Error(body && body.message)
+    }
+  }
+
   _setNeedSaveGlobalUser() {
     return AsyncStorage.setItem(GH_USER_KEY, JSON.stringify(GLOBAL_USER));
   }

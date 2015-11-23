@@ -173,11 +173,56 @@ const GHCell = React.createClass({
 
   },
 
+  timesAgo() {
+    const ghEvent = this.props.ghEvent;
+    const currentDate = new Date();
+    const ghDate = new Date(ghEvent.created_at);
+
+    return this.timeDifference(currentDate.getTime(), ghDate.getTime());
+  },
+
+  timeDifference(current, previous) {
+    console.log('current is: ' + current + 'previous is: ' + previous);
+
+    var msPerMinute = 60 * 1000;
+    var msPerHour = msPerMinute * 60;
+    var msPerDay = msPerHour * 24;
+    var msPerMonth = msPerDay * 30;
+    var msPerYear = msPerDay * 365;
+
+    var elapsed = current - previous;
+
+    if (elapsed < msPerMinute) {
+      return Math.round(elapsed/1000) + ' seconds ago';
+    }
+
+    else if (elapsed < msPerHour) {
+      return Math.round(elapsed/msPerMinute) + ' minutes ago';
+    }
+
+    else if (elapsed < msPerDay ) {
+      return Math.round(elapsed/msPerHour ) + ' hours ago';
+    }
+
+    else if (elapsed < msPerMonth) {
+      return 'approximately ' + Math.round(elapsed/msPerDay) + ' days ago';
+    }
+
+    else if (elapsed < msPerYear) {
+      return 'approximately ' + Math.round(elapsed/msPerMonth) + ' months ago';
+    }
+
+    else {
+      return 'approximately ' + Math.round(elapsed/msPerYear ) + ' years ago';
+    }
+  },
+
+
   render() {
     const ghEvent = this.props.ghEvent;
     // console.log('ghEvent is: ' + JSON.stringify(ghEvent));
     const author = ghEvent.actor;
-    const timesAgo = '20 hours ago';
+    const timesAgo = this.timesAgo();
     const targetRepo = ghEvent.repo;
 
     let textContainer;
