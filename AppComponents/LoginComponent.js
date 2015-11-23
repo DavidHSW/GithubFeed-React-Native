@@ -7,7 +7,6 @@ const GHService = require('../networkService/GithubServices')
 
 const {
   StyleSheet,
-  WebView,
   ActivityIndicatorIOS,
   View,
   Text,

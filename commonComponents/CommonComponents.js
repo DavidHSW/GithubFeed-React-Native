@@ -24,6 +24,14 @@ class CommonComponents {
       </View>
     )
   }
+
+  static renderSepLine() {
+    return (
+      <View style={CommonStyles.sepLine}>
+      </View>
+    )
+  }
+
 }
 
 module.exports = CommonComponents;

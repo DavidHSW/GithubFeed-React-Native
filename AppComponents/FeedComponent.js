@@ -1,26 +1,61 @@
 const React = require('react-native');
-const DXTextMenu = require('../iosComponents/DXTextMenu');
+const RefreshListView = require('./RefreshListView');
 const GHService = require('../networkService/GithubServices');
+const GHCell = require('./GHEventCell');
 
-const OPTIONS = ['你好', '问号', '狗带', '好玩', '你好', '问号', '狗带', '好玩', '你好', '问号', '狗带', '好玩'];
+const {
+  ListView,
+  View,
+  ActivityIndicatorIOS,
+  Text,
+  AppRegistry,
+} = React;
 
-const MessageComponent = React.createClass({
-  componentWillMount() {
+let FeedsPage = 1;
+const MAX_PAGE = 5;
+
+const FeedComponent = React.createClass({
+  handleReloadData(response) {
+    const body = response._bodyInit;
+    const jsonResult = JSON.parse(body);
+
+    // console.log('getFeeds response is: ' + JSON.stringify(jsonResult));
+
+    return jsonResult;
+  },
+
+  needNextPage() {
+    return FeedsPage < MAX_PAGE;
+  },
+
+  reloadPromise() {
+    FeedsPage = 1;
+    return GHService.getFeeds(FeedsPage);
+  },
+
+  appendPromise() {
+    FeedsPage ++;
+    return GHService.getFeeds(FeedsPage);
+  },
+
+  renderRow(rowData, sectionID, rowID, highlightRow) {
+    return (
+      <GHCell ghEvent={rowData}/>
+    )
   },
 
   render() {
     return (
-      <DXTextMenu
-        ref={(textMenu) => this.textMenu = textMenu}
-        style={{height: 38, marginTop: 100}}
-        options={OPTIONS}
-        selectedColor={'blue'}
-        blur={true}
-        blurEffectStyle={2}
-        contentInset={{top: 0, left: 0, bottom: 0, right: 0}}
+      <RefreshListView
+        handleReloadData={this.handleReloadData}
+        handleAppendData={this.handleReloadData}
+        reloadPromise={this.reloadPromise}
+        needNextPage={this.needNextPage}
+        appendPromise={this.appendPromise}
+        renderRow={this.renderRow}
       />
     );
   },
 });
 
-module.exports = MessageComponent;
+module.exports = FeedComponent;

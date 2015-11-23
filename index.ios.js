@@ -36,7 +36,6 @@ const GitFeedApp = React.createClass({
   componentWillMount() {
     GHService.queryLoginState()
       .then(value => {
-        console.log('value is: ' + JSON.stringify(value));
         let lst = LoginState.pending;
         if (value.username.length > 0) {
           lst = LoginState.onboard;

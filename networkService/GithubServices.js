@@ -41,7 +41,7 @@ class GithubService extends EventEmitter {
       AsyncStorage.getItem(GH_USER_KEY)
         .then(result => {
           if (result) {
-            console.log('result is:' + result);
+            console.log('GHService start user is:' + result);
             GLOBAL_USER = JSON.parse(result);
           }
           return GLOBAL_USER;
@@ -131,23 +131,40 @@ class GithubService extends EventEmitter {
   }
 
   tokenHeader() {
-    const tokenHeader = {
-      'Authorization': 'token ' + GLOBAL_USER.tokenInfo.token,
-      'User-Agent': config.userAgent
+    let tokenHeader = {
+      'User-Agent': config.userAgent,
+      'Accept': 'application/vnd.github.v3+json'
+    }
+    if (this.isLogined()) {
+      tokenHeader.Authorization = 'token ' + GLOBAL_USER.tokenInfo.token;
     }
 
     return tokenHeader;
   }
 
+  getFeeds(page) {
+    if (!this.isOnboard()) return;
+
+    let feedsURL = API_PATH + '/users/' + GLOBAL_USER.username + '/received_events';
+    if (page && page > 0) {
+      feedsURL +=  '?page=' + page;
+    }
+    console.log('GHService getFeeds: ' + feedsURL);
+    return (
+      fetch(feedsURL, {
+        headers: this.tokenHeader()
+      })
+    )
+  }
+
   getNotifications() {
     if (!this.isLogined()) return;
 
-    fetch(API_PATH + '/notifications', {
-      headers: this.tokenHeader(),
-    })
-      .then(response => {
-        console.log('getNotifications res is: ' + JSON.stringify(response));
+    return (
+      fetch(API_PATH + '/notifications', {
+        headers: this.tokenHeader(),
       })
+    )
   }
 
   _setNeedSaveGlobalUser() {

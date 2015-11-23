@@ -12,21 +12,6 @@ const commonStyles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  lineStyle: {
-    width: 3,
-    marginTop: 5,
-    marginBottom: 5,
-    marginLeft: 5,
-    backgroundColor: Colors.red,
-  },
-
-  floorTopText: {
-    fontSize: 16,
-    marginLeft: 5,
-    color: Colors.textBlack,
-    alignSelf: 'center',
-  },
-
   shadowLine: {
     shadowColor: '#999999',
     shadowOpacity: 0.8,
@@ -37,6 +22,10 @@ const commonStyles = StyleSheet.create({
     },
   },
 
+  sepLine: {
+    backgroundColor: Colors.backGray,
+    height: 0.5,
+  },
 });
 
 module.exports = commonStyles;

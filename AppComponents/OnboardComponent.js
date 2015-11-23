@@ -110,6 +110,7 @@ const OnboardComponent = React.createClass({
             returnKeyType={'done'}
             onChangeText={this.onNameChange}
             onSubmitEditing={this.submitOnboard}
+            placeholder={'your github username(NOT EMAIL)'}
           />
           <TouchableHighlight
             style={styles.go}
