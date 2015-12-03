@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
 
   confirm: {
     flexDirection: 'column',
-    backgroundColor: 'EFEFEF',
+    backgroundColor: '#EFEFEF',
     borderWidth: 1,
     borderColor: Colors.black,
     height: 35,
