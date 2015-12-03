@@ -27,6 +27,7 @@ const FloorListView = React.createClass({
     handleAppendData: PropTypes.func,
     needNextPage: PropTypes.func,
     renderRow: PropTypes.func,
+    handleError: PropTypes.func,
   },
 
   getInitialState() {
@@ -56,15 +57,20 @@ const FloorListView = React.createClass({
     const reloadPromise = this.props.reloadPromise();
     reloadPromise
       .then(value => {
-        console.log('Refresh listView response is: ' + JSON.stringify(value));
+        // console.log('Refresh listView response is: ' + JSON.stringify(value));
         GHService.checkError(value);
 
         const rdata = this.props.handleReloadData(value);
         this._setNeedsRenderList(rdata);
       })
-      // .catch(err => {
-      //   this.showError(err);
-      // })
+      .catch(err => {
+        this.showError(err);
+        this.props.handleError && this.props.handleError(err);
+
+        this.setState({
+          loaded: true,
+        });
+      })
       .done(() => {
         const node = this.refs[LISTVIEWREF];
         if (node) {
@@ -87,6 +93,7 @@ const FloorListView = React.createClass({
      })
      .catch(err => {
        this.showError(err);
+       this.props.handleError && this.props.handleError(err);
      })
   },
 
@@ -125,12 +132,16 @@ const FloorListView = React.createClass({
           removeClippedSubviews={true}
           scrollRenderAheadDistance={50}
           renderFooter={this.renderFooter}
-          contentInset={{top: 64, left: 0 , bottom: 49, right: 0}}
-          contentOffset={{x:0, y:-64}}
           onEndReached={this.appendPage}
         />
       </View>
     );
+
+
+    /* 在RN 15里面需要这样
+    contentInset={{top: 64, left: 0 , bottom: 49, right: 0}}
+    contentOffset={{x:0, y:-64}}
+    */
   },
 
   renderFooter() {

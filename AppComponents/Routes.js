@@ -22,7 +22,7 @@ class Routes {
 
 	static personal() {
 		return {
-			component: require('./PersonalComponent'),
+			component: require('./FeedComponent'),
 			title: 'me'
 		}
 	}
@@ -30,7 +30,16 @@ class Routes {
 	static repo(repo) {
 		return {
 			component: require('./RepoComponent'),
-			title: repo.name
+			title: repo.name,
+			passProps: {repo: repo},
+		}
+	}
+
+	static user(user) {
+		return {
+			component: require('./UserComponent'),
+			title: user.login,
+			passProps: {user: user},
 		}
 	}
 }

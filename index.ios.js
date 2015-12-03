@@ -5,6 +5,7 @@ const GHService = require('./networkService/GithubServices');
 const CommonComponents = require('./commonComponents/CommonComponents');
 const OnboardComponent = require('./AppComponents/OnboardComponent');
 const LoginMixin = require('./AppComponents/LoginMixin');
+const LoginComponent = require('./AppComponents/LoginComponent');
 
 const {
   AppRegistry,
@@ -43,7 +44,7 @@ const GitFeedApp = React.createClass({
           lst = LoginState.unOnboard;
         }
 
-        console.log('lst is: ' + JSON.stringify(lst));
+        console.log('login userstate is: ' + JSON.stringify(lst));
 
         this.setState({
           userState: lst,
@@ -68,8 +69,16 @@ const GitFeedApp = React.createClass({
         break;
     }
 
-    if (this.state.onboarded) {
+    if (this.state.onboarded || this.state.logined) {
       cp = <RootTab />;
+    }
+
+    if (this.state.needOnboard) {
+      cp = <OnboardComponent />;
+    }
+
+    if (this.state.needLogin) {
+      cp = <LoginComponent />
     }
 
     return cp;

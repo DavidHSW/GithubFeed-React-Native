@@ -1,5 +1,9 @@
 const React = require('react-native');
-const EvelatorBar = require('./Evelator');
+const GHService = require('../networkService/GithubServices');
+const ScrollableTabView = require('react-native-scrollable-tab-view');
+const CommonComponents = require('../commonComponents/CommonComponents');
+const ScrollingTabBar = require('./ScrollingTabBar');
+const EvelatorBar = require('./EvelatorBar');
 
 const {
   View,
@@ -14,7 +18,6 @@ var styles = StyleSheet.create({
   }
 });
 
-var numbers = ['Repos', 'Following', 'Stars', 'ok', 'baby', 'come', 'go', 'where', 'mars', 'japan', 'shanghai', 'nanjing'];
 
 const UserComponent = React.createClass({
   getInitialState() {
@@ -35,6 +38,7 @@ const UserComponent = React.createClass({
   },
 
   renderRounds() {
+    var numbers = ['Repos', 'Following', 'Stars', 'ok', 'baby', 'come', 'go', 'where', 'mars', 'japan', 'shanghai', 'nanjing'];
 
     return numbers.map((n) => {
       return (
@@ -52,9 +56,13 @@ const UserComponent = React.createClass({
   render() {
     return (
       <View style={styles.container}>
-        <EvelatorBar
-          tabs={numbers}
-        />
+        <ScrollableTabView
+          style={{backgroundColor: '#fff'}}
+          onChangeTab={this.onChangeTab}
+          edgeHitWidth={200}
+          renderTabBar={() => <EvelatorBar style={styles.evelatorBar} />}>
+          {this.renderRounds()}
+        </ScrollableTabView>
       </View>
     )
   }

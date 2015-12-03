@@ -1,61 +1,50 @@
 const React = require('react-native');
-const RefreshListView = require('./RefreshListView');
 const GHService = require('../networkService/GithubServices');
-const GHCell = require('./GHEventCell');
+const CommonComponents = require('../commonComponents/CommonComponents');
 
 const {
   ListView,
   View,
   ActivityIndicatorIOS,
   Text,
-  AppRegistry,
+  WebView,
 } = React;
 
 let FeedsPage = 1;
 const MAX_PAGE = 5;
 
-const FeedComponent = React.createClass({
-  handleReloadData(response) {
-    const body = response._bodyInit;
-    const jsonResult = JSON.parse(body);
-
-    // console.log('getFeeds response is: ' + JSON.stringify(jsonResult));
-
-    return jsonResult;
+const RepoComponent = React.createClass({
+  getInitialState() {
+    return {
+      html: '',
+    }
   },
 
-  needNextPage() {
-    return FeedsPage < MAX_PAGE;
-  },
+  componentWillMount() {
+    const repo = this.props.repo;
+    GHService.getRepoHTMLString(repo.name)
+      .then(value => {
+        GHService.checkError(value);
 
-  reloadPromise() {
-    FeedsPage = 1;
-    return GHService.getFeeds(FeedsPage);
-  },
 
-  appendPromise() {
-    FeedsPage ++;
-    return GHService.getFeeds(FeedsPage);
-  },
-
-  renderRow(rowData, sectionID, rowID, highlightRow) {
-    return (
-      <GHCell ghEvent={rowData}/>
-    )
+        console.log('repo value is:' + value._bodyInit);
+        this.setState({
+          html: value._bodyInit,
+        });
+      })
   },
 
   render() {
-    return (
-      <RefreshListView
-        handleReloadData={this.handleReloadData}
-        handleAppendData={this.handleReloadData}
-        reloadPromise={this.reloadPromise}
-        needNextPage={this.needNextPage}
-        appendPromise={this.appendPromise}
-        renderRow={this.renderRow}
-      />
-    );
+    if (this.state.html.length === 0) {
+      return CommonComponents.renderLoadingView();
+    } else {
+      return (
+        <WebView
+          html={this.state.html}
+        />
+      )
+    }
   },
 });
 
-module.exports = FeedComponent;
+module.exports = RepoComponent;

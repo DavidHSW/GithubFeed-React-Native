@@ -44,6 +44,7 @@ static NSMutableDictionary *__defaultTopMessageConfig = nil;
         self.label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 50)];
         self.label.backgroundColor = [UIColor clearColor];
         self.label.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        self.label.adjustsFontSizeToFitWidth = YES;
         [self addSubview:self.label];
         
         self.iconIgv = [[UIImageView alloc] init];

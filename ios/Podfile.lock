@@ -8,11 +8,15 @@ PODS:
   - SDWebImage (3.7.3):
     - SDWebImage/Core (= 3.7.3)
   - SDWebImage/Core (3.7.3)
+  - YYKit (0.9.1):
+    - YYKit/no-arc (= 0.9.1)
+  - YYKit/no-arc (0.9.1)
 
 DEPENDENCIES:
   - DXPhotoBrowser-DXSimplePhoto
   - DXRefresh
   - POP
+  - YYKit
 
 SPEC CHECKSUMS:
   DXPhotoBrowser: bc1213d28e9a37e09fa9c9e089cb4f0378547b5d
@@ -20,5 +24,6 @@ SPEC CHECKSUMS:
   DXRefresh: e024cf66d86adb146e393481f894099b89480ca7
   pop: 33ef7afe61c559586cc5a95a3f0bf2238dbee157
   SDWebImage: 759e3ea2db01b0db3ac2189173f0e1e9f2e2612b
+  YYKit: 46b5778e4132f2486ce43913bf237eb99e23e042
 
 COCOAPODS: 0.35.0

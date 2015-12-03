@@ -3,3 +3,4 @@ source "git@gitlab.alibaba-inc.com:alipods/specs-mirror.git"
 pod 'DXRefresh'
 pod 'DXPhotoBrowser-DXSimplePhoto'
 pod 'POP'
+pod 'YYKit'

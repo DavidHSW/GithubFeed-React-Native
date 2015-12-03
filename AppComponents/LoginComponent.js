@@ -155,6 +155,7 @@ const LoginComponent = React.createClass({
               style={styles.textInput}
               returnKeyType={'next'}
               onChangeText={this.onNameChange}
+              defaultValue={GHService.currentUser().username}
             />
             <Text style={styles.nameAndPwd}>
               Password
@@ -164,6 +165,8 @@ const LoginComponent = React.createClass({
               returnKeyType={'done'}
               onSubmitEditing={this.submitLogin}
               onChangeText={this.onPwdChange}
+              secureTextEntry={true}
+              defaultValue={GHService.currentUser().password}
             />
             <TouchableHighlight
               style={styles.confirm}

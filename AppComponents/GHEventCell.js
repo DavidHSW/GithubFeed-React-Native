@@ -1,6 +1,7 @@
 const React = require('react-native');
 const Colors = require('../commonComponents/Colors');
 const CommonComponents = require('../commonComponents/CommonComponents');
+const Routes = require('./Routes');
 
 const {
   StyleSheet,
@@ -163,10 +164,16 @@ const GHCell = React.createClass({
   openTargetRepo() {
     const ghEvent = this.props.ghEvent;
     const targetRepo = ghEvent.repo;
+    console.log('openTargetRepo: ' + JSON.stringify(ghEvent));
+
+    this.props.navigator.push(Routes.repo(targetRepo));
   },
 
   openAuthor() {
+    const ghEvent = this.props.ghEvent;
+    const actor = ghEvent.actor;
 
+    this.props.navigator.push(Routes.user(actor));
   },
 
   openTargetUser() {
@@ -182,8 +189,6 @@ const GHCell = React.createClass({
   },
 
   timeDifference(current, previous) {
-    console.log('current is: ' + current + 'previous is: ' + previous);
-
     var msPerMinute = 60 * 1000;
     var msPerHour = msPerMinute * 60;
     var msPerDay = msPerHour * 24;

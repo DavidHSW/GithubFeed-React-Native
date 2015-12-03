@@ -20,6 +20,7 @@ const EMPTY_TOKEN = {
 };
 const EMPTY_USER = {
   username: '',
+  password: '',
   avatar: '',
   userId: '',
   tokenInfo: EMPTY_TOKEN,
@@ -72,7 +73,7 @@ class GithubService extends EventEmitter {
   }
 
   isLogined() {
-    return GLOBAL_USER.tokenInfo.token.length > 0;
+    return this.isOnboard() && GLOBAL_USER.tokenInfo.token.length > 0;
   }
 
   login(name, pwd) {
@@ -103,13 +104,12 @@ class GithubService extends EventEmitter {
           tokenInfo.id = tokenId;
           tokenInfo.token = token;
           GLOBAL_USER.tokenInfo = tokenInfo;
+          GLOBAL_USER.username = name;
+          GLOBAL_USER.password = pwd;
 
           SingleGHService.emitLogin();
 
           return SingleGHService._setNeedSaveGlobalUser();
-        })
-        .catch(err => {
-          console.log('login error is:' + err);
         })
     )
   }
@@ -138,6 +138,7 @@ class GithubService extends EventEmitter {
     if (this.isLogined()) {
       tokenHeader.Authorization = 'token ' + GLOBAL_USER.tokenInfo.token;
     }
+    console.log('token header is: ' + JSON.stringify(tokenHeader));
 
     return tokenHeader;
   }
@@ -170,15 +171,41 @@ class GithubService extends EventEmitter {
   checkError(res) {
     const status = res.status;
     console.log('res status is: ' + status);
-    const body = JSON.parse(res._bodyInit);
 
-    if (status >= 300) {
-      throw new Error(body && body.message)
+    if (status >= 400) {
+      const body = JSON.parse(res._bodyInit);
+      let bodyMessge = body && body.message;
+      if (bodyMessge === 'Not Found') {
+        SingleGHService.emit('needOnboard');
+        bodyMessge = 'User Not Found please check your username';
+        GLOBAL_USER = EMPTY_USER;
+        SingleGHService._setNeedSaveGlobalUser();
+      } else if (bodyMessge.indexOf('exceeded') !== -1) {
+        bodyMessge = 'For a high rate request, please login';
+        SingleGHService.emit('needLogin');
+      }
+
+      throw new Error(bodyMessge)
     }
+  }
+
+  getRepoHTMLString(userAndRepo) {
+    let tokenHeader = this.tokenHeader();
+    tokenHeader.Accept = 'application/vnd.github.VERSION.raw';
+    const repoURL = API_PATH + '/repos/' + userAndRepo + '/readme';
+    console.log('repoURL : ' + repoURL);
+
+    return fetch(repoURL, {
+      headers: tokenHeader,
+    })
   }
 
   _setNeedSaveGlobalUser() {
     return AsyncStorage.setItem(GH_USER_KEY, JSON.stringify(GLOBAL_USER));
+  }
+
+  currentUser() {
+    return GLOBAL_USER;
   }
 }
 

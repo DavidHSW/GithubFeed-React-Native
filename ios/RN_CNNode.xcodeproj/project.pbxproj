@@ -31,7 +31,13 @@
 		BE6A49221BD766A90012C18A /* DXTopMessageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6A49211BD766A90012C18A /* DXTopMessageManager.m */; };
 		BE95BCAC1BD8E7F300B69DD1 /* NativePlayViewControllr.m in Sources */ = {isa = PBXBuildFile; fileRef = BE95BCAB1BD8E7F300B69DD1 /* NativePlayViewControllr.m */; };
 		BE95BCC21BD9F9C300B69DD1 /* DXTextCategoryMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = BE95BCC11BD9F9C300B69DD1 /* DXTextCategoryMenu.m */; };
-		BECF119D1BFEF27C006F1B04 /* libReactNativeIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BECF119C1BFEF268006F1B04 /* libReactNativeIcons.a */; };
+		BECF12981C05D5FC006F1B04 /* libReactNativeIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BECF119C1BFEF268006F1B04 /* libReactNativeIcons.a */; };
+		BECF12A21C05D9F8006F1B04 /* FontAwesome.otf in Resources */ = {isa = PBXBuildFile; fileRef = BECF11AD1BFEF2F4006F1B04 /* FontAwesome.otf */; };
+		BECF12A31C05D9FF006F1B04 /* foundation-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BECF11AF1BFEF2F4006F1B04 /* foundation-icons.ttf */; };
+		BECF12A41C05DA06006F1B04 /* ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BECF11B01BFEF2F4006F1B04 /* ionicons.ttf */; };
+		BECF12A51C05DA0E006F1B04 /* Material-Design-Iconic-Font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BECF11B11BFEF2F4006F1B04 /* Material-Design-Iconic-Font.ttf */; };
+		BECF12A61C05DA0E006F1B04 /* octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BECF11B21BFEF2F4006F1B04 /* octicons.ttf */; };
+		BECF12A71C05DA0E006F1B04 /* zocial-regular-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BECF11B31BFEF2F4006F1B04 /* zocial-regular-webfont.ttf */; };
 		BEF368901BFC736D003DF66C /* DXRNUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF3688F1BFC736D003DF66C /* DXRNUtils.m */; };
 		CAB811B981DA26E2A433577E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B0A9B6DB06C486519294E4B9 /* libPods.a */; };
 /* End PBXBuildFile section */
@@ -194,6 +200,15 @@
 		BECF11B11BFEF2F4006F1B04 /* Material-Design-Iconic-Font.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Material-Design-Iconic-Font.ttf"; sourceTree = "<group>"; };
 		BECF11B21BFEF2F4006F1B04 /* octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = octicons.ttf; sourceTree = "<group>"; };
 		BECF11B31BFEF2F4006F1B04 /* zocial-regular-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "zocial-regular-webfont.ttf"; sourceTree = "<group>"; };
+		BECF12961C05D5DF006F1B04 /* libReactNativeIcons.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libReactNativeIcons.a; path = "../../../Library/Developer/Xcode/DerivedData/RN_CNNode-bijtcaiqgsghdxggxaokxvknxoca/Build/Products/Debug-iphoneos/libReactNativeIcons.a"; sourceTree = "<group>"; };
+		BECF129A1C05D660006F1B04 /* SMXTabBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMXTabBar.h; sourceTree = "<group>"; };
+		BECF129B1C05D660006F1B04 /* SMXTabBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SMXTabBar.m; sourceTree = "<group>"; };
+		BECF129C1C05D660006F1B04 /* SMXTabBarItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMXTabBarItem.h; sourceTree = "<group>"; };
+		BECF129D1C05D660006F1B04 /* SMXTabBarItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SMXTabBarItem.m; sourceTree = "<group>"; };
+		BECF129E1C05D660006F1B04 /* SMXTabBarItemManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMXTabBarItemManager.h; sourceTree = "<group>"; };
+		BECF129F1C05D660006F1B04 /* SMXTabBarItemManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SMXTabBarItemManager.m; sourceTree = "<group>"; };
+		BECF12A01C05D660006F1B04 /* SMXTabBarManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SMXTabBarManager.h; sourceTree = "<group>"; };
+		BECF12A11C05D660006F1B04 /* SMXTabBarManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SMXTabBarManager.m; sourceTree = "<group>"; };
 		BEF3688E1BFC736D003DF66C /* DXRNUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DXRNUtils.h; sourceTree = "<group>"; };
 		BEF3688F1BFC736D003DF66C /* DXRNUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DXRNUtils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -210,7 +225,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BECF119D1BFEF27C006F1B04 /* libReactNativeIcons.a in Frameworks */,
+				BECF12981C05D5FC006F1B04 /* libReactNativeIcons.a in Frameworks */,
 				BE29C3691BD642BB00EAC526 /* libRCTRefreshControl.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
@@ -330,6 +345,7 @@
 		6E4EB708B23B50AC7DD30812 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BECF12961C05D5DF006F1B04 /* libReactNativeIcons.a */,
 				B0A9B6DB06C486519294E4B9 /* libPods.a */,
 			);
 			name = Frameworks;
@@ -373,6 +389,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				BECF12991C05D660006F1B04 /* IconTabBarItem */,
 				BECF119E1BFEF2F4006F1B04 /* FontAwesomeKit */,
 				13B07FAE1A68108700A75B9A /* RN_CNNode */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -478,6 +495,22 @@
 			path = FontAwesomeKit;
 			sourceTree = "<group>";
 		};
+		BECF12991C05D660006F1B04 /* IconTabBarItem */ = {
+			isa = PBXGroup;
+			children = (
+				BECF129A1C05D660006F1B04 /* SMXTabBar.h */,
+				BECF129B1C05D660006F1B04 /* SMXTabBar.m */,
+				BECF129C1C05D660006F1B04 /* SMXTabBarItem.h */,
+				BECF129D1C05D660006F1B04 /* SMXTabBarItem.m */,
+				BECF129E1C05D660006F1B04 /* SMXTabBarItemManager.h */,
+				BECF129F1C05D660006F1B04 /* SMXTabBarItemManager.m */,
+				BECF12A01C05D660006F1B04 /* SMXTabBarManager.h */,
+				BECF12A11C05D660006F1B04 /* SMXTabBarManager.m */,
+			);
+			name = IconTabBarItem;
+			path = "../node_modules/react-native-icons/ios/ReactNativeIcons/IconTabBarItem";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -499,9 +532,9 @@
 			productReference = 00E356EE1AD99517003FC87E /* RN_CNNodeTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* RN_CNNode */ = {
+		13B07F861A680F5B00A75B9A /* GitFeed */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RN_CNNode" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "GitFeed" */;
 			buildPhases = (
 				C39D3F5BE3E28069BA634A83 /* Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -513,7 +546,7 @@
 			);
 			dependencies = (
 			);
-			name = RN_CNNode;
+			name = GitFeed;
 			productName = "Hello World";
 			productReference = 13B07F961A680F5B00A75B9A /* RN_CNNode.app */;
 			productType = "com.apple.product-type.application";
@@ -596,7 +629,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* RN_CNNode */,
+				13B07F861A680F5B00A75B9A /* GitFeed */,
 				00E356ED1AD99517003FC87E /* RN_CNNodeTests */,
 			);
 		};
@@ -701,6 +734,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BECF12A51C05DA0E006F1B04 /* Material-Design-Iconic-Font.ttf in Resources */,
+				BECF12A61C05DA0E006F1B04 /* octicons.ttf in Resources */,
+				BECF12A71C05DA0E006F1B04 /* zocial-regular-webfont.ttf in Resources */,
+				BECF12A41C05DA06006F1B04 /* ionicons.ttf in Resources */,
+				BECF12A31C05D9FF006F1B04 /* foundation-icons.ttf in Resources */,
+				BECF12A21C05D9F8006F1B04 /* FontAwesome.otf in Resources */,
 				008F07F31AC5B25A0029DE68 /* main.jsbundle in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
@@ -773,7 +812,7 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* RN_CNNode */;
+			target = 13B07F861A680F5B00A75B9A /* GitFeed */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -834,6 +873,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Di He (2582UT2XQ3)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -856,6 +899,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Di He (2582UT2XQ3)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -974,7 +1021,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "RN_CNNode" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "GitFeed" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,

@@ -40,8 +40,12 @@ const FeedComponent = React.createClass({
 
   renderRow(rowData, sectionID, rowID, highlightRow) {
     return (
-      <GHCell ghEvent={rowData}/>
+      <GHCell ghEvent={rowData} navigator={this.props.navigator}/>
     )
+  },
+
+  handleError(err) {
+    console.log('FeedComponent handle error: ' + err);
   },
 
   render() {
@@ -53,6 +57,7 @@ const FeedComponent = React.createClass({
         needNextPage={this.needNextPage}
         appendPromise={this.appendPromise}
         renderRow={this.renderRow}
+        handleError={this.handleError}
       />
     );
   },
