@@ -10,7 +10,6 @@
 #import "RCTBridge.h"
 #import "RCTConvert.h"
 #import "RCTScrollView.h"
-#import "RCTSparseArray.h"
 #import "RCTUIManager.h"
 #import "RCTEventDispatcher.h"
 #import "UIView+react.h"
@@ -40,7 +39,7 @@ RCT_EXPORT_MODULE();
  */
 
 RCT_EXPORT_METHOD(showTopMessage:(nonnull NSNumber *)reactTag message:(nonnull NSString *)message config:(NSDictionary *)config callback:(RCTResponseSenderBlock)callback) {
-  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, RCTSparseArray *viewRegistry) {
+  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
     dispatch_async(dispatch_get_main_queue(), ^{
       UIView *view = viewRegistry[reactTag];
       if (!view) {
@@ -55,6 +54,7 @@ RCT_EXPORT_METHOD(showTopMessage:(nonnull NSNumber *)reactTag message:(nonnull N
       callback(@[[NSNull null], reactTag]);
     });
   }];
+  
 }
 
 - (NSDictionary *)mapTopBarConfig:(NSDictionary *)jsConfig {

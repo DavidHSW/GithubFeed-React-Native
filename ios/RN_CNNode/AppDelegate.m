@@ -82,13 +82,11 @@
 
 //  jsCodeLocation = [NSURL URLWithString:@"http://10.1.220.194:8081/index.ios.bundle?platform=ios&dev=true"];
   
-  NSString *ipAddress = [NSString stringWithFormat:@"http://%@:8081/index.ios.bundle?platform=ios&dev=true", [self getIPAddress]];
+  NSString *ipAddress = [NSString stringWithFormat:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true", [self getIPAddress]];
   jsCodeLocation = [NSURL URLWithString:ipAddress];
 
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-                                                      moduleName:@"Github_RN"
-                                                   launchOptions:launchOptions];
-
+  RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation moduleName:@"Github_RN" initialProperties:nil launchOptions:launchOptions];
+  
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [[UIViewController alloc] init];
   rootViewController.view = rootView;

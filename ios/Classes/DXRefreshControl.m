@@ -10,7 +10,6 @@
 #import "RCTBridge.h"
 #import "RCTConvert.h"
 #import "RCTScrollView.h"
-#import "RCTSparseArray.h"
 #import "RCTUIManager.h"
 #import "RCTEventDispatcher.h"
 #import "UIView+react.h"
@@ -43,7 +42,7 @@ RCT_EXPORT_METHOD(configureCustom:(nonnull NSNumber *)reactTag headerConfig:(NSD
     return;
   }
 
-  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, RCTSparseArray *viewRegistry) {
+  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
     dispatch_async(dispatch_get_main_queue(), ^{
       UIView *view = viewRegistry[reactTag];
       if (!view) {
@@ -76,7 +75,7 @@ RCT_EXPORT_METHOD(configureCustom:(nonnull NSNumber *)reactTag headerConfig:(NSD
 }
 
 RCT_EXPORT_METHOD(beginRefreshing:(nonnull NSNumber *)reactTag) {
-  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, RCTSparseArray *viewRegistry) {
+  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
     dispatch_async(dispatch_get_main_queue(), ^{
       UIView *view = viewRegistry[reactTag];
       if (!view) {
@@ -95,7 +94,7 @@ RCT_EXPORT_METHOD(beginRefreshing:(nonnull NSNumber *)reactTag) {
 }
 
 RCT_EXPORT_METHOD(endRefreshing:(nonnull NSNumber *)reactTag) {
-  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, RCTSparseArray *viewRegistry) {
+  [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
     dispatch_async(dispatch_get_main_queue(), ^{
       UIView *view = viewRegistry[reactTag];
       if (!view) {

@@ -1,9 +1,6 @@
 const React = require('react-native');
 const GHService = require('../networkService/GithubServices');
-const ScrollableTabView = require('react-native-scrollable-tab-view');
 const CommonComponents = require('../commonComponents/CommonComponents');
-const ScrollingTabBar = require('./ScrollingTabBar');
-const EvelatorBar = require('./EvelatorBar');
 
 const {
   View,
@@ -56,13 +53,6 @@ const UserComponent = React.createClass({
   render() {
     return (
       <View style={styles.container}>
-        <ScrollableTabView
-          style={{backgroundColor: '#fff'}}
-          onChangeTab={this.onChangeTab}
-          edgeHitWidth={200}
-          renderTabBar={() => <EvelatorBar style={styles.evelatorBar} />}>
-          {this.renderRounds()}
-        </ScrollableTabView>
       </View>
     )
   }

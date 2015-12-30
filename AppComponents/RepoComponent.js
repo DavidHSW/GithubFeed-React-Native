@@ -10,41 +10,31 @@ const {
   WebView,
 } = React;
 
-let FeedsPage = 1;
 const MAX_PAGE = 5;
+const hideJS = `
+  ;(function hideHead(){
+    document.getElementsByClassName("nav-bar")[0].style.display="none";
+    document.getElementsByClassName("breadcrumb blob-breadcrumb")[0].style.display="none";
+    document.getElementsByClassName("clearfix")[0].style.display="none";
+  })();
+`;
 
 const RepoComponent = React.createClass({
-  getInitialState() {
-    return {
-      html: '',
-    }
-  },
-
-  componentWillMount() {
-    const repo = this.props.repo;
-    GHService.getRepoHTMLString(repo.name)
-      .then(value => {
-        GHService.checkError(value);
-
-
-        console.log('repo value is:' + value._bodyInit);
-        this.setState({
-          html: value._bodyInit,
-        });
-      })
+  onNavigationStateChange(e) {
+    console.log('web changed', e);
   },
 
   render() {
-    if (this.state.html.length === 0) {
-      return CommonComponents.renderLoadingView();
-    } else {
-      return (
-        <WebView
-          html={this.state.html}
-        />
-      )
-    }
+    const readmeURL = 'https://github.com/' + this.props.repo.name + '/blob/master/README.md'
+    return (
+      <WebView
+        url={readmeURL}
+        onNavigationStateChange={this.onNavigationStateChange}
+        injectedJavaScript={hideJS}
+      />
+    )
   },
 });
+
 
 module.exports = RepoComponent;

@@ -1,7 +1,5 @@
-const _ = require('underscore');
 const config = require('../config');
 const {EventEmitter} = require('events');
-const URL = require('url');
 const React = require('react-native');
 const DXUtils = require('../iosComponents/DXRNUtils');
 
@@ -131,16 +129,16 @@ class GithubService extends EventEmitter {
   }
 
   tokenHeader() {
-    let tokenHeader = {
+    let tHeader = {
       'User-Agent': config.userAgent,
       'Accept': 'application/vnd.github.v3+json'
     }
     if (this.isLogined()) {
-      tokenHeader.Authorization = 'token ' + GLOBAL_USER.tokenInfo.token;
+      tHeader.Authorization = 'token ' + GLOBAL_USER.tokenInfo.token;
     }
-    console.log('token header is: ' + JSON.stringify(tokenHeader));
+    console.log('token header is: ' + JSON.stringify(tHeader));
 
-    return tokenHeader;
+    return tHeader;
   }
 
   getFeeds(page) {
@@ -150,7 +148,6 @@ class GithubService extends EventEmitter {
     if (page && page > 0) {
       feedsURL +=  '?page=' + page;
     }
-    console.log('GHService getFeeds: ' + feedsURL);
     return (
       fetch(feedsURL, {
         headers: this.tokenHeader()

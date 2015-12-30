@@ -1,5 +1,4 @@
 const React = require('react-native');
-const EvelatorBar = require('./Evelator');
 
 const {
   View,
@@ -52,9 +51,6 @@ const UserComponent = React.createClass({
   render() {
     return (
       <View style={styles.container}>
-        <EvelatorBar
-          tabs={numbers}
-        />
       </View>
     )
   }
