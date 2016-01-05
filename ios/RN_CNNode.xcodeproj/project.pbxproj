@@ -24,7 +24,6 @@
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		BE29C35F1BD6296100EAC526 /* PopoverManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29C35E1BD6296100EAC526 /* PopoverManager.m */; };
 		BE29C36C1BD6637F00EAC526 /* DXRefreshControl.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29C36B1BD6637F00EAC526 /* DXRefreshControl.m */; };
-		BE5E816B1BCDF67C00BA8AB4 /* DXPopover.m in Sources */ = {isa = PBXBuildFile; fileRef = BE5E81691BCDF67C00BA8AB4 /* DXPopover.m */; };
 		BE6A49131BD7667B0012C18A /* UIView+TopBarMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6A49121BD7667B0012C18A /* UIView+TopBarMessage.m */; };
 		BE6A49221BD766A90012C18A /* DXTopMessageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6A49211BD766A90012C18A /* DXTopMessageManager.m */; };
 		BE95BCAC1BD8E7F300B69DD1 /* NativePlayViewControllr.m in Sources */ = {isa = PBXBuildFile; fileRef = BE95BCAB1BD8E7F300B69DD1 /* NativePlayViewControllr.m */; };
@@ -149,8 +148,6 @@
 		BE29C35E1BD6296100EAC526 /* PopoverManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverManager.m; sourceTree = "<group>"; };
 		BE29C36A1BD6637F00EAC526 /* DXRefreshControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DXRefreshControl.h; sourceTree = "<group>"; };
 		BE29C36B1BD6637F00EAC526 /* DXRefreshControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DXRefreshControl.m; sourceTree = "<group>"; };
-		BE5E81681BCDF67C00BA8AB4 /* DXPopover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DXPopover.h; sourceTree = "<group>"; };
-		BE5E81691BCDF67C00BA8AB4 /* DXPopover.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DXPopover.m; sourceTree = "<group>"; };
 		BE6A49111BD7667B0012C18A /* UIView+TopBarMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+TopBarMessage.h"; sourceTree = "<group>"; };
 		BE6A49121BD7667B0012C18A /* UIView+TopBarMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+TopBarMessage.m"; sourceTree = "<group>"; };
 		BE6A49201BD766A90012C18A /* DXTopMessageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DXTopMessageManager.h; sourceTree = "<group>"; };
@@ -395,8 +392,6 @@
 				BE6A49211BD766A90012C18A /* DXTopMessageManager.m */,
 				BE95BCC01BD9F9C300B69DD1 /* DXTextCategoryMenu.h */,
 				BE95BCC11BD9F9C300B69DD1 /* DXTextCategoryMenu.m */,
-				BE5E81681BCDF67C00BA8AB4 /* DXPopover.h */,
-				BE5E81691BCDF67C00BA8AB4 /* DXPopover.m */,
 				BE29C35D1BD6296100EAC526 /* PopoverManager.h */,
 				BE29C35E1BD6296100EAC526 /* PopoverManager.m */,
 			);
@@ -649,7 +644,6 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				BE29C35F1BD6296100EAC526 /* PopoverManager.m in Sources */,
 				BE29C36C1BD6637F00EAC526 /* DXRefreshControl.m in Sources */,
-				BE5E816B1BCDF67C00BA8AB4 /* DXPopover.m in Sources */,
 				BE6A49131BD7667B0012C18A /* UIView+TopBarMessage.m in Sources */,
 				BE6A49221BD766A90012C18A /* DXTopMessageManager.m in Sources */,
 				BE95BCC21BD9F9C300B69DD1 /* DXTextCategoryMenu.m in Sources */,

@@ -103,7 +103,7 @@ const OnboardComponent = React.createClass({
   render() {
     return (
       <View style={styles.container}>
-        <Image style={styles.welcomeImage} />
+        <Image style={styles.welcomeImage} source={require('../AppIcons/ios/iTunesArtwork.png')}/>
         <View style={styles.loginContainer}>
           <TextInput
             style={styles.textInput}

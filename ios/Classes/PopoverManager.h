@@ -7,8 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "RCTBridgeModule.h"
 
-@interface PopoverManager : NSObject<RCTBridgeModule>
+@interface PopoverManager : NSObject
 
 @end

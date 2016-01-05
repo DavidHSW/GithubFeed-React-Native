@@ -81,7 +81,7 @@
 
 //  jsCodeLocation = [NSURL URLWithString:@"http://10.1.220.194:8081/index.ios.bundle?platform=ios&dev=true"];
   
-  NSString *ipAddress = [NSString stringWithFormat:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true", [self getIPAddress]];
+  NSString *ipAddress = [NSString stringWithFormat:@"http://localhost:8081/index.ios.bundle?platform=ios&dev=true"];
   jsCodeLocation = [NSURL URLWithString:ipAddress];
 
   

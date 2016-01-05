@@ -27,14 +27,6 @@ class Routes {
 		}
 	}
 
-	static repo(repo) {
-		return {
-			component: require('./RepoComponent'),
-			title: repo.name,
-			passProps: {repo: repo},
-		}
-	}
-
 	static user(user) {
 		return {
 			component: require('./UserComponent'),

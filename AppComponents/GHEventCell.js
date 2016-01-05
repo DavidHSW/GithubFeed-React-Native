@@ -9,6 +9,7 @@ const {
   Text,
   Image,
   TouchableHighlight,
+  TouchableOpacity,
 } = React;
 
 const GHCell = React.createClass({
@@ -90,8 +91,8 @@ const GHCell = React.createClass({
     const ghEvent = this.props.ghEvent;
     let targetRepo = ghEvent.repo;
     targetRepo.html = 'https://github.com/' + targetRepo.name + '/blob/master/README.md';
-
-    this.props.navigator.push({id: 'repo', obj: targetRepo});
+    targetRepo.title = targetRepo.name;
+    this.props.navigator.push({id: 'web', obj: targetRepo});
   },
 
   openAuthor() {
@@ -234,10 +235,12 @@ const GHCell = React.createClass({
       <TouchableHighlight underlayColor={'lightGray'} onPress={this.cellAction()}>
         <View style={styles.cellContentView}>
           <View style={styles.cellUp}>
-            <Image
-              source={{uri: author.avatar_url}}
-              style={styles.avatar}
-            />
+            <TouchableOpacity onPress={this.openAuthor}>
+              <Image
+                source={{uri: author.avatar_url}}
+                style={styles.avatar}
+              />
+            </TouchableOpacity>
           <Text style={styles.username} onPress={this.openAuthor}>
               {author.login}
             </Text>

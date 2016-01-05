@@ -130,12 +130,12 @@ const FloorListView = React.createClass({
           dataSource={this.state.dataSource}
           renderRow={this.props.renderRow}
           removeClippedSubviews={true}
-          scrollRenderAheadDistance={50}
           renderFooter={this.renderFooter}
           onEndReached={this.appendPage}
           automaticallyAdjustContentInsets={false}
           contentInset={{top: 64, left: 0, bottom: 49, right: 0}}
           contentOffset={{x:0, y:-64}}
+          scrollRenderAheadDistance={50}
         />
       </View>
     );

@@ -22,7 +22,6 @@ const {
 
 const UserComponent = React.createClass({
   _detailUser: {},
-  _headerHeight: 0,
 
   PropTypes: {
     user: React.PropTypes.object,
@@ -68,6 +67,7 @@ const UserComponent = React.createClass({
         return GHService.fetchPromise(orgURL);
       })
       .then(res => {
+        console.log('org', res);
         const orgs = JSON.parse(res._bodyInit);
         if (Array.isArray(orgs) && orgs.length > 0) {
           this._detailUser.orgs = orgs;
@@ -79,27 +79,8 @@ const UserComponent = React.createClass({
       .catch(err => {console.log('promise err', err);});
   },
 
-  onOpenRepos() {
-    if (!this.state.dataSource.getRowCount > 0) {
-      return;
-    }
-
-    this.scv && this.scv.scrollResponderScrollTo(0, this._headerHeight);
-  },
-
-  onHeaderLayout(e) {
-    this._headerHeight = e.nativeEvent.layout.height;
-  },
-
   renderHeader() {
-    return (
-      <AboutComponent
-        user={this._detailUser}
-        onOpenRepos={this.onOpenRepos}
-        onLayout={this.onHeaderLayout}
-        navigator={this.props.navigator}
-      />
-    )
+    return <AboutComponent user={this._detailUser}/>
   },
 
   renderRow(rowData, sectionID, rowID, highlightRow) {
@@ -109,7 +90,6 @@ const UserComponent = React.createClass({
   render() {
     return (
       <ListView
-        ref={(scv) => this.scv = scv}
         style={styles.container}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
@@ -125,11 +105,6 @@ const UserComponent = React.createClass({
 });
 
 const AboutComponent = React.createClass({
-  PropTypes: {
-    onOpenRepos: React.PropTypes.func,
-    user: React.PropTypes.object,
-  },
-
   onPressEmail() {
     console.log('press email');
   },
@@ -140,30 +115,6 @@ const AboutComponent = React.createClass({
 
   onPressOrg() {
 
-  },
-
-  onFollow() {
-
-  },
-
-  onOpenFollowers() {
-    const user = {
-      url: this.props.user.followers_url,
-      title: 'Followers',
-    }
-    this.props.navigator.push({id: 'userList', obj: user});
-  },
-
-  onOpenFollowing() {
-    const user = {
-      url: this.props.user.url + '/following',
-      title: 'Following',
-    }
-    this.props.navigator.push({id: 'userList', obj: user});
-  },
-
-  onOpenRepos() {
-    this.props.onOpenRepos && this.props.onOpenRepos();
   },
 
   renderOrg(org) {
@@ -240,19 +191,8 @@ const AboutComponent = React.createClass({
     }
 
     let userJoined;
-    if (user.created_at) {
-      const date = new Date(user.created_at).toISOString().slice(0, 10);
-      const joined = 'Joined on ' + date;
-      userJoined = (
-        <View style={styles.iconTextContainer}>
-          <Icon
-            name='ion|ios-clock-outline'
-            size={ICON_SIZE}
-            style={styles.icon}
-            color={Colors.textGray}/>
-          <Text style={styles.profileInfoLocation}>{joined}</Text>
-        </View>
-      )
+    if (user.userJoined) {
+      userJoined = <Text style={styles.profileInfoLocation}>{user.userJoined}</Text>;
     }
 
     let userOrg;
@@ -268,7 +208,7 @@ const AboutComponent = React.createClass({
     }
 
     return (
-      <View style={[styles.scvContainerStyle]} {...this.props}>
+      <View style={[styles.scvContainerStyle]}>
         <View style={styles.profile}>
           <Image style={styles.profileImage} source={{uri: user.avatar_url}}/>
           <View style={styles.profileInfo}>
@@ -283,7 +223,7 @@ const AboutComponent = React.createClass({
         </View>
         {userOrg}
         <View style={styles.status}>
-          <TouchableOpacity onPress={this.onFollow}>
+          <TouchableOpacity>
             <View style={styles.statusFollowButton}>
               <Icon
                 name='ion|ios-person-outline'
@@ -294,7 +234,7 @@ const AboutComponent = React.createClass({
             </View>
           </TouchableOpacity>
           <View style={styles.statusInfo}>
-            <TouchableOpacity onPress={this.onOpenFollowers}>
+            <TouchableOpacity>
               <View style={styles.statusInfoTouch}>
                 <Text style={styles.statusInfoTouchNum}>
                   {user.followers}
@@ -304,7 +244,7 @@ const AboutComponent = React.createClass({
                 </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.onOpenRepos}>
+            <TouchableOpacity style={{flex: 1}}>
               <View style={styles.statusInfoTouch}>
                 <Text style={styles.statusInfoTouchNum}>
                   {user.public_repos}
@@ -314,7 +254,7 @@ const AboutComponent = React.createClass({
                 </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.onOpenFollowing}>
+            <TouchableOpacity style={{flex: 1}}>
               <View style={styles.statusInfoTouch}>
                 <Text style={styles.statusInfoTouchNum}>
                   {user.following}
@@ -326,6 +266,15 @@ const AboutComponent = React.createClass({
             </TouchableOpacity>
           </View>
         </View>
+      </View>
+   )
+  }
+});
+
+const RepoListComponent = React.createClass({
+  render() {
+    return (
+      <View style={styles.card}>
       </View>
    )
   }
@@ -395,9 +344,6 @@ var styles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderColor: 'rgba(0,0,0,0.1)',
-    paddingLeft: 20,
-    paddingBottom: 10,
-    paddingTop: 10,
   },
   orgnizationsText: {
     color: 'black',
@@ -411,7 +357,6 @@ var styles = StyleSheet.create({
     marginLeft: 3,
     borderRadius: 2,
     marginBottom: 2,
-    backgroundColor: 'lightGray',
   },
   status: {
     flexDirection: 'column',
