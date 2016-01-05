@@ -8,83 +8,8 @@ const {
   View,
   Text,
   Image,
+  TouchableHighlight,
 } = React;
-
-const styles = StyleSheet.create({
-  cellContentView: {
-    flexDirection: 'column',
-    flex: 1,
-    alignItems: 'stretch',
-  },
-
-  cellUp: {
-    margin: 10,
-    height: 40,
-    flexDirection: 'column',
-    flexWrap: 'wrap',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-    marginBottom: 1,
-  },
-
-  avatar: {
-    width: 40,
-    height: 40,
-    backgroundColor: Colors.backGray
-  },
-
-  username: {
-    marginLeft: 10,
-    height: 19,
-    color: '#4078C0',
-    fontSize: 15,
-  },
-
-  textActionContainer: {
-    margin: 10,
-    marginTop: 7,
-    marginBottom: 10,
-    marginLeft: 10,
-  },
-
-  textDesContainer: {
-    margin: 10,
-    marginTop: -5,
-    marginBottom: 10,
-    marginLeft: 25,
-    borderStyle: 'dashed',
-  },
-
-  linkText: {
-    color: '#4078C0',
-    fontSize: 15,
-    fontWeight: 'normal',
-  },
-
-  actionText: {
-    color: '#666666',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-
-  normalText: {
-    color: '#666666',
-    fontSize: 15,
-    fontWeight: 'normal',
-  },
-
-  commentText: {
-    color: Colors.textGray,
-  },
-
-  createAt: {
-    marginLeft: 10,
-    marginTop: 2,
-    height: 14,
-    fontSize: 11,
-    color: '#BFBFBF',
-  },
-});
 
 const GHCell = React.createClass({
   propTypes: {
@@ -163,21 +88,61 @@ const GHCell = React.createClass({
 
   openTargetRepo() {
     const ghEvent = this.props.ghEvent;
-    const targetRepo = ghEvent.repo;
-    console.log('openTargetRepo: ' + JSON.stringify(ghEvent));
+    let targetRepo = ghEvent.repo;
+    targetRepo.html = 'https://github.com/' + targetRepo.name + '/blob/master/README.md';
 
-    this.props.navigator.push(Routes.repo(targetRepo));
+    this.props.navigator.push({id: 'repo', obj: targetRepo});
   },
 
   openAuthor() {
     const ghEvent = this.props.ghEvent;
     const actor = ghEvent.actor;
 
-    this.props.navigator.push(Routes.user(actor));
+    this.props.navigator.push({id: 'user', obj: actor});
   },
 
   openTargetUser() {
 
+  },
+
+  openWebEvent() {
+    const ghEvent = this.props.ghEvent;
+    let targetRepo = ghEvent.repo;
+    switch (ghEvent.type) {
+      case 'PushEvent':
+        targetRepo.html = 'https://github.com/' + this.props.repo.name + '/blob/master/README.md';
+        break;
+      case 'IssuesEvent':
+      case 'IssueCommentEvent': {
+        targetRepo.html = ghEvent.payload.issue.html_url;
+        targetRepo.title = ghEvent.payload.issue.title;
+      }
+        break;
+      case 'PullRequestEvent': {
+        targetRepo.html = ghEvent.payload.pull_request.html_url;
+        targetRepo.title = ghEvent.payload.pull_request.title;
+      }
+        break;
+      default:
+        targetRepo.html = 'https://github.com/' + this.props.repo.name + '/blob/master/README.md';
+    }
+
+    this.props.navigator.push({id: 'web', obj: targetRepo});
+  },
+
+  cellAction() {
+    const ghEvent = this.props.ghEvent;
+    switch (ghEvent.type) {
+      case 'PushEvent':
+        return this.openTargetRepo;
+      case 'IssueCommentEvent':
+      case 'IssuesEvent':
+        return this.openWebEvent;
+      case 'PullRequestEvent':
+        return this.openWebEvent;
+      default:
+        return this.openTargetRepo;
+    }
   },
 
   timesAgo() {
@@ -266,22 +231,100 @@ const GHCell = React.createClass({
     }
 
     return (
-      <View style={styles.cellContentView}>
-        <View style={styles.cellUp}>
-          <Image
-            source={{uri: author.avatar_url}}
-            style={styles.avatar}
-          />
-        <Text style={styles.username} onPress={this.openAuthor}>
-            {author.login}
-          </Text>
-          <Text style={styles.createAt}>{timesAgo}</Text>
+      <TouchableHighlight underlayColor={'lightGray'} onPress={this.cellAction()}>
+        <View style={styles.cellContentView}>
+          <View style={styles.cellUp}>
+            <Image
+              source={{uri: author.avatar_url}}
+              style={styles.avatar}
+            />
+          <Text style={styles.username} onPress={this.openAuthor}>
+              {author.login}
+            </Text>
+            <Text style={styles.createAt}>{timesAgo}</Text>
+          </View>
+          {textContainer}
+          {this.detailComponentForEvent(ghEvent)}
+          {CommonComponents.renderSepLine()}
         </View>
-        {textContainer}
-        {this.detailComponentForEvent(ghEvent)}
-        {CommonComponents.renderSepLine()}
-      </View>
+      </TouchableHighlight>
     );
+  },
+});
+
+const styles = StyleSheet.create({
+  cellContentView: {
+    flexDirection: 'column',
+    flex: 1,
+    alignItems: 'stretch',
+  },
+
+  cellUp: {
+    margin: 10,
+    height: 40,
+    flexDirection: 'column',
+    flexWrap: 'wrap',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    marginBottom: 1,
+  },
+
+  avatar: {
+    width: 40,
+    height: 40,
+    backgroundColor: Colors.backGray
+  },
+
+  username: {
+    marginLeft: 10,
+    height: 19,
+    color: '#4078C0',
+    fontSize: 15,
+  },
+
+  textActionContainer: {
+    margin: 10,
+    marginTop: 7,
+    marginBottom: 10,
+    marginLeft: 10,
+  },
+
+  textDesContainer: {
+    margin: 10,
+    marginTop: -5,
+    marginBottom: 10,
+    marginLeft: 25,
+    borderStyle: 'dashed',
+  },
+
+  linkText: {
+    color: '#4078C0',
+    fontSize: 15,
+    fontWeight: 'normal',
+  },
+
+  actionText: {
+    color: '#666666',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  normalText: {
+    color: '#666666',
+    fontSize: 15,
+    fontWeight: 'normal',
+  },
+
+  commentText: {
+    color: Colors.textGray,
+  },
+
+  createAt: {
+    marginLeft: 10,
+    marginTop: 2,
+    height: 14,
+    fontSize: 11,
+    color: '#BFBFBF',
   },
 });
 

@@ -31,6 +31,9 @@ const RepoComponent = React.createClass({
         url={readmeURL}
         onNavigationStateChange={this.onNavigationStateChange}
         injectedJavaScript={hideJS}
+        automaticallyAdjustContentInsets={false}
+        contentInset={{top: 64, left: 0, bottom: 49, right: 0}}
+        startInLoadingState={true}
       />
     )
   },

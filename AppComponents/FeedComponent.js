@@ -40,7 +40,7 @@ const FeedComponent = React.createClass({
 
   renderRow(rowData, sectionID, rowID, highlightRow) {
     return (
-      <GHCell ghEvent={rowData} navigator={this.props.navigator}/>
+      <GHCell key={rowID} ghEvent={rowData} navigator={this.props.navigator}/>
     )
   },
 

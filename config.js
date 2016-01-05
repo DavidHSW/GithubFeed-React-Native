@@ -9,6 +9,7 @@ var config = {
   "redirectURI": 'http://baidu.com/',
   "scopes": ['public_repo', 'user', 'notifications'],
   'userAgent': 'GithubFeed',
+  "mockData": true,
 }
 
 module.exports = config

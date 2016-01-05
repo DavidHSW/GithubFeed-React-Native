@@ -2,6 +2,7 @@ const config = require('../config');
 const {EventEmitter} = require('events');
 const React = require('react-native');
 const DXUtils = require('../iosComponents/DXRNUtils');
+const MockFeedJSON = require('./mockFeed');
 
 const {
   AsyncStorage,
@@ -144,6 +145,15 @@ class GithubService extends EventEmitter {
   getFeeds(page) {
     if (!this.isOnboard()) return;
 
+    // MockData Mode
+    if (config.mockData) {
+      return new Promise(function(resolve, reject) {
+        setTimeout(function () {
+          resolve({_bodyInit: JSON.stringify(MockFeedJSON)})
+        }, 1000);
+      });
+    }
+
     let feedsURL = API_PATH + '/users/' + GLOBAL_USER.username + '/received_events';
     if (page && page > 0) {
       feedsURL +=  '?page=' + page;
@@ -203,6 +213,12 @@ class GithubService extends EventEmitter {
 
   currentUser() {
     return GLOBAL_USER;
+  }
+
+  fetchPromise(url) {
+    return fetch(url, {
+      headers: this.tokenHeader(),
+    });
   }
 }
 

@@ -13,6 +13,7 @@ const colors = {
 	textGold: '#BC7233',
 	borderColor: '#E2E2E2',
 	black: '#586872',
+	blue: '#4078c0',
 }
 
 module.exports = colors;
