@@ -5,9 +5,12 @@ const GHCell = require('./GHEventCell');
 const UserComponent = require('./UserComponent');
 const GHWebComponent = require('./GithubWebComponent');
 const UserListComponent = require('./UserListComponent');
+const OrgComponent = require('./OrgComponent');
 const cssVar = require('cssVar');
 const { TabBarIOS, Icon } = require('react-native-icons');
 const Colors = require('../commonComponents/Colors');
+
+
 
 const {
   StyleSheet,
@@ -63,6 +66,9 @@ const NavigationBarRouteMapper = {
         title = route.obj.title;
         break;
       case 'userList':
+        title = route.obj.title;
+        break;
+      case 'org':
         title = route.obj.title;
         break;
     }
@@ -134,6 +140,9 @@ const FeedComponent = React.createClass({
         return <GHWebComponent html={route.obj.html} navigator={navigator}/>;
       case 'userList':
         return <UserListComponent userListURL={route.obj.url} navigator={navigator}/>;
+      case 'org':
+        return <OrgComponent user = {route.obj}
+        navigator={navigator}/>
 
     }
 

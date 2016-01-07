@@ -139,7 +139,11 @@ const AboutComponent = React.createClass({
   },
 
   onPressOrg() {
-
+    const user = {
+        url:this.props.user.url,
+        title:'Organizations',
+    }
+    this.props.navigator.push({id:'org',obj:user});
   },
 
   onFollow() {
