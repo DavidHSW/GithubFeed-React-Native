@@ -141,7 +141,7 @@ const FeedComponent = React.createClass({
       case 'userList':
         return <UserListComponent userListURL={route.obj.url} navigator={navigator}/>;
       case 'org':
-        return <OrgComponent user = {route.obj}
+        return <OrgComponent org = {route.obj}
         navigator={navigator}/>
 
     }

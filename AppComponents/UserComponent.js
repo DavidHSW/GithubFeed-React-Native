@@ -138,12 +138,12 @@ const AboutComponent = React.createClass({
 
   },
 
-  onPressOrg() {
-    const user = {
-        url:this.props.user.url,
+  onPressOrg(org) {
+    const orgObj = {
+        url:org.url,
         title:'Organizations',
     }
-    this.props.navigator.push({id:'org',obj:user});
+    this.props.navigator.push({id:'org',obj:orgObj});
   },
 
   onFollow() {
@@ -172,7 +172,7 @@ const AboutComponent = React.createClass({
 
   renderOrg(org) {
     return (
-      <TouchableOpacity onPress={this.onPressOrg}>
+      <TouchableOpacity onPress={() => this.onPressOrg(org)}>
         <Image style={styles.orgnizationsImage} source={{uri: org.avatar_url}}/>
       </TouchableOpacity>
     )
