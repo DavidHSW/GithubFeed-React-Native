@@ -57,9 +57,6 @@ const FloorListView = React.createClass({
     const reloadPromise = this.props.reloadPromise();
     reloadPromise
       .then(value => {
-        // console.log('Refresh listView response is: ' + JSON.stringify(value));
-        GHService.checkError(value);
-
         const rdata = this.props.handleReloadData(value);
         this._setNeedsRenderList(rdata);
       })
@@ -86,8 +83,6 @@ const FloorListView = React.createClass({
     const appendPromise = this.props.appendPromise();
     appendPromise
      .then(value => {
-       GHService.checkError(value);
-
        const rdata = this.props.handleAppendData(value);
        this._setNeedsRenderList(rdata);
      })

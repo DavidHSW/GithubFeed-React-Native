@@ -14,6 +14,104 @@ const {
   TextInput,
 } = React;
 
+const WEBVIEWREF = 'webview';
+
+const LoginComponent = React.createClass({
+  getInitialState() {
+    return {
+      username: GHService.currentUser().username,
+      password: GHService.currentUser().password,
+      logining: false,
+    }
+  },
+
+  submitLogin() {
+    const state = this.state;
+    console.log('name & pwd is: ' + this.state.username + this.state.password);
+    if (this.state.logining) return;
+
+    this.setState({
+      logining: true,
+    });
+    console.log('submitLogin');
+    GHService.login(state.username, state.password, (user) => {
+      this.props.navigator.pop();
+    });
+  },
+
+  onNameChange(text) {
+    this.setState({
+      username: text,
+    });
+  },
+
+  onPwdChange(text) {
+    this.setState({
+      password: text,
+    });
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.logining != nextState.logining;
+  },
+
+  render() {
+    let signInCp;
+    if (this.state.logining) {
+      signInCp = (
+        <ActivityIndicatorIOS
+          style={styles.indicator}
+          size="small"
+        />
+      )
+    }
+
+    return (
+      <View style={{backgroundColor: 'white'}}>
+        <View style={styles.loginCard}>
+          <View style={styles.up}>
+            <Text style={styles.introText}>
+              Sign in to Github
+            </Text>
+            {signInCp}
+          </View>
+          <View style={styles.down}>
+            <Text style={styles.nameAndPwd}>
+              Username or email
+            </Text>
+            <TextInput
+              style={styles.textInput}
+              returnKeyType={'next'}
+              onChangeText={this.onNameChange}
+              defaultValue={this.state.username}
+            />
+            <Text style={styles.nameAndPwd}>
+              Password
+            </Text>
+            <TextInput
+              style={styles.textInput}
+              returnKeyType={'done'}
+              onSubmitEditing={this.submitLogin}
+              onChangeText={this.onPwdChange}
+              secureTextEntry={true}
+              defaultValue={this.state.password}
+            />
+            <TouchableHighlight
+              style={styles.confirm}
+              onPress={this.submitLogin}
+              underlayColor={Colors.backGray}
+              >
+              <Text style={[styles.nameAndPwd, {'textAlign': 'center'}]}>
+                Sign in
+              </Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </View>
+    )
+  },
+});
+
 const styles = StyleSheet.create({
   loginCard: {
     height: 250,
@@ -83,103 +181,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     borderRadius: 4,
     borderColor: Colors.borderColor,
-  },
-
-});
-
-const WEBVIEWREF = 'webview';
-
-const LoginComponent = React.createClass({
-  getInitialState() {
-    return {
-      username: GHService.currentUser().username,
-      password: GHService.currentUser().password,
-      logining: false,
-    }
-  },
-
-  submitLogin() {
-    const state = this.state;
-    console.log('name & pwd is: ' + this.state.username + this.state.password);
-    if (this.state.logining) return;
-
-    this.setState({
-      logining: true,
-    });
-    console.log('submitLogin');
-    GHService.login(state.username, state.password);
-  },
-
-  onNameChange(text) {
-    this.setState({
-      username: text,
-    });
-  },
-
-  onPwdChange(text) {
-    this.setState({
-      password: text,
-    });
-  },
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.state.logining != nextState.logining;
-  },
-
-  render() {
-    let signInCp;
-    if (this.state.logining) {
-      signInCp = (
-        <ActivityIndicatorIOS
-          style={styles.indicator}
-          size="small"
-        />
-      )
-    }
-
-    return (
-      <View>
-        <View style={styles.loginCard}>
-          <View style={styles.up}>
-            <Text style={styles.introText}>
-              Sign in to Github
-            </Text>
-            {signInCp}
-          </View>
-          <View style={styles.down}>
-            <Text style={styles.nameAndPwd}>
-              Username or email
-            </Text>
-            <TextInput
-              style={styles.textInput}
-              returnKeyType={'next'}
-              onChangeText={this.onNameChange}
-              defaultValue={this.state.username}
-            />
-            <Text style={styles.nameAndPwd}>
-              Password
-            </Text>
-            <TextInput
-              style={styles.textInput}
-              returnKeyType={'done'}
-              onSubmitEditing={this.submitLogin}
-              onChangeText={this.onPwdChange}
-              secureTextEntry={true}
-              defaultValue={this.state.password}
-            />
-            <TouchableHighlight
-              style={styles.confirm}
-              onPress={this.submitLogin}
-              underlayColor={Colors.backGray}
-              >
-              <Text style={[styles.nameAndPwd, {'textAlign': 'center'}]}>
-                Sign in
-              </Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </View>
-    )
   },
 });
 

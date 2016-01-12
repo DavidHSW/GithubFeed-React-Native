@@ -6,6 +6,7 @@ const MockFeedJSON = require('./mockFeed');
 
 const {
   AsyncStorage,
+  Navigator,
 } = React;
 
 const API_PATH = 'https://api.github.com';
@@ -67,15 +68,11 @@ class GithubService extends EventEmitter {
     SingleGHService._setNeedSaveGlobalUser();
   }
 
-  emitLogin() {
-    this.emit('login');
-  }
-
   isLogined() {
     return this.isOnboard() && GLOBAL_USER.tokenInfo.token.length > 0;
   }
 
-  login(name, pwd) {
+  login(name, pwd, cb) {
     // const uandp = Base64.encode('xiekw2010@gmail.com:z57482148');
     const uandp = 'eGlla3cyMDEwQGdtYWlsLmNvbTp6NTc0ODIxNDg=';
     console.log('basic is' + uandp);
@@ -107,27 +104,27 @@ class GithubService extends EventEmitter {
           GLOBAL_USER.username = name;
           GLOBAL_USER.password = pwd;
 
-          SingleGHService.emitLogin();
+          cb && cb(GLOBAL_USER);
 
           return SingleGHService._setNeedSaveGlobalUser();
         })
     )
   }
 
-  logout() {
-    return new Promise(function(resolve, reject) {
-      fetch(AUTH_URL_PATH + '/' + GLOBAL_TOKEN.id, {
-        method: 'DELETE',
-        headers: this.tokenHeader()
-      })
-        .catch(err => {
-          console.log('logout err is: ' + err);
-        })
-      GLOBAL_USER = EMPTY_USER;
-      AsyncStorage.removeItem(GH_USER_KEY);
-      DXUtils.clearCookie();
-      resolve(null);
-    });
+  logout(cb) {
+    fetch(AUTH_URL_PATH + '/' + GLOBAL_TOKEN.id, {
+      method: 'DELETE',
+      headers: this.tokenHeader()
+    })
+      .catch(err => {
+        console.log('logout err is: ' + err);
+      });
+
+    GLOBAL_USER = EMPTY_USER;
+    AsyncStorage.removeItem(GH_USER_KEY);
+    DXUtils.clearCookie();
+
+    cb && cb();
   }
 
   tokenHeader() {
@@ -176,28 +173,20 @@ class GithubService extends EventEmitter {
     )
   }
 
-  checkError(res) {
-    const status = res.status;
-    console.log('res status is: ' + status);
-
-    if (status >= 400) {
-      const body = JSON.parse(res._bodyInit);
-      let bodyMessge = body && body.message;
-      if (bodyMessge === 'Not Found') {
-        // SingleGHService.emit('needOnboard');
-        // bodyMessge = 'User Not Found please check your username';
-        // GLOBAL_USER = EMPTY_USER;
-        // SingleGHService._setNeedSaveGlobalUser();
-      } else if (bodyMessge.indexOf('exceeded') !== -1) {
-        bodyMessge = 'For a high rate request, please login';
-        SingleGHService.emit('needLogin');
-      } else if (bodyMessge.indexOf('Bad credentials') !== -1) {
-        SingleGHService.emit('needLogin');
-      } else if (bodyMessge.indexOf('Requires authentication') !== -1) {
-        SingleGHService.emit('needLogin');
-      }
-
-      throw new Error(bodyMessge)
+  checkNeedLogin(bobyMessage, navigator) {
+    const loginMessages = [
+      'exceeded',
+      'Bad credentials',
+      'Requires authentication'
+    ];
+    const needLogin = loginMessages.some(item => bobyMessage.indexOf(item) < 0);
+    console.log('needLogin', needLogin);
+    if (needLogin) {
+      navigator.push({
+        id: 'login',
+        sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+        title: 'Please Login now',
+      });
     }
   }
 
@@ -205,7 +194,6 @@ class GithubService extends EventEmitter {
     let tokenHeader = this.tokenHeader();
     tokenHeader.Accept = 'application/vnd.github.VERSION.raw';
     const repoURL = API_PATH + '/repos/' + userAndRepo + '/readme';
-    console.log('repoURL : ' + repoURL);
 
     return fetch(repoURL, {
       headers: tokenHeader,

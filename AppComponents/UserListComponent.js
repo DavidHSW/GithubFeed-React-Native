@@ -4,9 +4,10 @@ const GHService = require('../networkService/GithubServices');
 const UserCell = require('./UserCell');
 
 let USER_PAGE = 1;
-let MAX_PAGE = 10;
 
 const UserListComponent = React.createClass({
+  _endPage: -1,
+
   PropTypes: {
     userListURL: React.PropTypes.string,
   },
@@ -14,14 +15,29 @@ const UserListComponent = React.createClass({
   handleReloadData(response) {
     const body = response._bodyInit;
     const jsonResult = JSON.parse(body);
+    console.log('log user is: ', response);
 
-    // console.log('getFeeds response is: ' + JSON.stringify(jsonResult));
+    // TODO: 对正则还不是很熟，用这种比较挫的方式
+    if (this._endPage == -1) {
+      const links = response.headers.map.link && response.headers.map.link[0];
+      if (links) {
+        const re = links.split('page=')[2];
+        if (re.indexOf('last') >= 0) {
+          const en = re.split('>;')[0];
+
+          console.log('links is', links, re, en);
+          this._endPage = en;
+        }
+      } else {
+        this._endPage = USER_PAGE;
+      }
+    }
 
     return jsonResult;
   },
 
   needNextPage() {
-    return true;
+    return this._endPage != USER_PAGE;
   },
 
   reloadPromise() {

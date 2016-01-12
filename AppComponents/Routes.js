@@ -1,11 +1,14 @@
 const React = require('react-native');
 const { Icon } = require('react-native-icons');
-const UserComponent = require('./UserComponent');
+const {UserComponent} = require('./UserComponent');
 const GHWebComponent = require('./GithubWebComponent');
 const UserListComponent = require('./UserListComponent');
 const FeedComponent = require('./FeedComponent');
 const cssVar = require('cssVar');
 const Colors = require('../commonComponents/Colors');
+const LoginComponent = require('./LoginComponent');
+const GHService = require('../networkService/GithubServices')
+const OrgComponent = require('./OrgComponent');
 
 const {
   Navigator,
@@ -17,7 +20,7 @@ const {
 
 const NavigationBarRouteMapper = {
   LeftButton: function(route, navigator, index, navState) {
-    if (index === 0) {
+    if (index === 0 || route.id === 'login') {
       return null;
     }
 
@@ -36,7 +39,32 @@ const NavigationBarRouteMapper = {
   },
 
   RightButton: function(route, navigator, index, navState) {
-    return null
+    let rightButton;
+    switch (route.id) {
+      case 'login': {
+        rightButton = (
+          <TouchableOpacity onPress={() => navigator.pop()}>
+            <Text style={[styles.navBarText, {marginRight: 20}]}>
+              Done
+            </Text>
+          </TouchableOpacity>
+        )
+      }
+        break;
+      case 'feed': {
+        rightButton = (
+          <TouchableOpacity onPress={() => GHService.logout()}>
+            <Text style={styles.navBarText}>
+              logout
+            </Text>
+          </TouchableOpacity>
+        )
+      }
+        break;
+      default:
+    }
+
+    return rightButton;
   },
 
   Title: function(route, navigator, index, navState) {
@@ -57,6 +85,11 @@ const NavigationBarRouteMapper = {
       case 'userList':
         title = route.obj.title;
         break;
+      case 'login':
+        title = route.title;
+      case 'org':
+        title = 'org';
+        break;
     }
     return (
       <Text style={[styles.navBarText,
@@ -75,6 +108,12 @@ const routes = {
 			<Navigator
 				initialRoute={{id: initialRoute}}
 				renderScene={this.renderScene}
+        configureScene={(route) => {
+          if (route.sceneConfig) {
+            return route.sceneConfig;
+          }
+          return Navigator.SceneConfigs.FloatFromRight;
+        }}
 				navigationBar={
 					<Navigator.NavigationBar
 						routeMapper={NavigationBarRouteMapper}
@@ -94,13 +133,17 @@ const routes = {
         return <GHWebComponent webURL={route.obj.html} param={route.obj} navigator={navigator}/>;
       case 'userList':
         return <UserListComponent userListURL={route.obj.url} navigator={navigator}/>;
+      case 'login':
+        return <LoginComponent navigator={navigator}/>;
+      case 'org':
+        return <OrgComponent navigator={navigator} org={route.obj}/>;
     }
 
     return null;
 	}
 }
 
-var styles = StyleSheet.create({
+const styles = StyleSheet.create({
   messageText: {
     fontSize: 17,
     fontWeight: '500',

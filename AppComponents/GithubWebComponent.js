@@ -172,9 +172,10 @@ const RepoToolBar = React.createClass({
     const toggleAction = isWatch ? 'DELETE' : 'PUT';
 
     GHService.repoWatchQuery(this._repoRes.full_name, toggleAction)
-      .then(res => {
-        GHService.checkError(res);
-        const status = res.status;
+      .then(value => {
+        const json = JSON.parse(value._bodyInit);
+        GHService.checkNeedLogin(json.message, this.props.navigator);
+        const status = value.status;
         const isNowStar = this.state.watchStatus == 'Unwatch';
         const starStatus = isNowStar ? 'Watch' : 'Unwatch';
         const toggleCount = isNowStar ? -1 : 1;
@@ -199,9 +200,10 @@ const RepoToolBar = React.createClass({
     const toggleAction = isStar ? 'DELETE' : 'PUT';
 
     GHService.repoStarQuery(this._repoRes.full_name, toggleAction)
-      .then(res => {
-        GHService.checkError(res);
-        const status = res.status;
+      .then(value => {
+        const json = JSON.parse(value._bodyInit);
+        GHService.checkNeedLogin(json.message, this.props.navigator);
+        const status = value.status;
         const isNowStar = this.state.starStatus == 'Unstar';
         const starStatus = isNowStar ? 'Star' : 'Unstar';
         const toggleCount = isNowStar ? -1 : 1;

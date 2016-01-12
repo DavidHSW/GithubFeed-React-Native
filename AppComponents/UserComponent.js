@@ -125,13 +125,17 @@ const AboutComponent = React.createClass({
   },
 
   onPressOrg() {
-
+    this.props.navigator.push({id: 'org', obj: user});
   },
 
   onFollow() {
     const action = this.state.user.isFollowing ? 'DELETE' : 'PUT';
     GHService.userFollowQuery(this.state.user.login, action)
       .then(value => {
+        console.log('userFollowQuery value is', value);
+        const json = JSON.parse(value._bodyInit);
+        GHService.checkNeedLogin(json.message, this.props.navigator);
+
         const status = value.status;
         if (status < 400) {
           this.state.user.isFollowing = !this.state.user.isFollowing ;
@@ -171,7 +175,10 @@ const AboutComponent = React.createClass({
 
   renderOrg(org) {
     return (
-      <TouchableOpacity onPress={this.onPressOrg}>
+      <TouchableOpacity onPress={() => {
+          console.log('press org', org);
+          this.props.navigator.push({id: 'org', obj: org});
+        }}>
         <Image style={styles.orgnizationsImage} source={{uri: org.avatar_url}}/>
       </TouchableOpacity>
     )
@@ -513,4 +520,7 @@ var styles = StyleSheet.create({
 
 });
 
-module.exports = UserComponent;
+module.exports = {
+  UserComponent: UserComponent,
+  AboutComponent: AboutComponent
+};

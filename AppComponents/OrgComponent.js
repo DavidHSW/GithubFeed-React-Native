@@ -5,6 +5,8 @@ const ScrollableTabView = require('react-native-scrollable-tab-view');
 const { Icon, } = require('react-native-icons');
 const Colors = require('../commonComponents/Colors');
 const RepoCell = require('./RepoCell');
+const FacebookTabBar = require('./FacebookTabBar');
+const UserListComponent = require('./UserListComponent')
 
 const {
   View,
@@ -20,12 +22,27 @@ const {
 
  const ICON_SIZE = 18;
 
-const UserComponent = React.createClass({
-  _detailUser: {},
-
+const OrgComponent = React.createClass({
   PropTypes: {
-    user: React.PropTypes.object,
+    org: React.PropTypes.object,
   },
+
+  render() {
+    return (
+      <View>
+        <View style = {{height:64}} />
+        <AboutComponent org={this.props.org}/>
+        <ScrollableTabView renderTabBar={() => <FacebookTabBar />}>
+          <RepoList tabLabel="ion|ios-paper" org={this.props.org}/>
+          <MemberList tabLabel="ion|person-stalker" org={this.props.org}/>
+        </ScrollableTabView>
+      </View>
+    )
+  }
+});
+
+const RepoList = React.createClass({
+  _detailOrg:{},
 
   getInitialState() {
     const dataSourceParam = {
@@ -35,52 +52,28 @@ const UserComponent = React.createClass({
 
     return {
       dataSource: new ListView.DataSource(dataSourceParam),
-      userDetailLoaded: false,
-      userReposLoaded: false,
-      userOrgLoaded: false,
+      orgReposLoaded: false,
     };
   },
 
   componentWillMount() {
-    this._detailUser = this.props.user;
-    const userURL = this._detailUser.url;
+    this._detailOrg = this.props.org;
+    const orgURL = this._detailOrg.url;
 
-    GHService.fetchPromise(userURL)
+    GHService.fetchPromise(orgURL)
       .then(res => {
-        const resUser = JSON.parse(res._bodyInit);
-        this._detailUser = Object.assign(this._detailUser, resUser);
-        this.setState({
-          userDetailLoaded: true,
-        });
-
-        const repoURL = resUser.repos_url + '?sort=updated';
+        const resOrg = JSON.parse(res._bodyInit);
+        const repoURL = resOrg.repos_url + '?sort=updated';
         return GHService.fetchPromise(repoURL);
       })
       .then(res => {
         const repos = JSON.parse(res._bodyInit);
         this.setState({
           dataSource: this.state.dataSource.cloneWithRows(repos),
-          userReposLoaded: true,
+          orgReposLoaded: true,
         });
-
-        const orgURL = this._detailUser.organizations_url;
-        return GHService.fetchPromise(orgURL);
-      })
-      .then(res => {
-        console.log('org', res);
-        const orgs = JSON.parse(res._bodyInit);
-        if (Array.isArray(orgs) && orgs.length > 0) {
-          this._detailUser.orgs = orgs;
-          this.setState({
-            userOrgLoaded: true,
-          });
-        }
       })
       .catch(err => {console.log('promise err', err);});
-  },
-
-  renderHeader() {
-    return <AboutComponent user={this._detailUser}/>
   },
 
   renderRow(rowData, sectionID, rowID, highlightRow) {
@@ -93,18 +86,79 @@ const UserComponent = React.createClass({
         style={styles.container}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
-        renderHeader={this.renderHeader}
         automaticallyAdjustContentInsets={false}
-        contentInset={{top: 64, left: 0, bottom: 49, right: 0}}
-        contentOffset={{x:0, y:-64}}
+        contentInset={{top: 0, left: 0, bottom: 49, right: 0}}
+        contentOffset={{x:0, y:0}}
         scrollRenderAheadDistance={50}
-      >
+        >
       </ListView>
     )
   }
 });
 
+const MemberList = React.createClass({
+  _memberListURL:{},
+
+  getInitialState() {
+    return {
+      orgReposLoaded: false,
+    };
+  },
+
+  componentWillMount() {
+    const orgURL = this.props.org.url;
+
+    GHService.fetchPromise(orgURL)
+      .then(res => {
+        const resOrg = JSON.parse(res._bodyInit);
+        const cutIndex = resOrg.members_url.indexOf('{');
+        this._memberListURL = resOrg.members_url.substring(0,cutIndex);
+        this._memberListURL += '?sort=updated';
+        this.setState({
+          orgReposLoaded: true,
+        });
+      })
+      .catch(err => {console.log('promise err', err);});
+  },
+
+  render() {
+    if(this.state.orgReposLoaded) {
+      return (
+        <UserListComponent userListURL = {this._memberListURL}/>
+      )
+    } else {
+      return(
+        <ScrollView/>
+      );
+    }
+  }
+});
+
 const AboutComponent = React.createClass({
+  _detailOrg:{},
+
+  getInitialState(){
+    return {
+      orgDetailLoaded:false,
+    };
+  },
+
+  componentWillMount(){
+    this._detailOrg = this.props.org;
+    const orgURL = this._detailOrg.url;
+
+    GHService.fetchPromise(orgURL)
+      .then(res => {
+        const resOrg = JSON.parse(res._bodyInit);
+        this._detailOrg = Object.assign(this._detailOrg, resOrg);
+        this.setState({
+          orgDetailLoaded: true,
+        });
+      })
+      .catch(err => {console.log('promise err', err);});
+
+  },
+
   onPressEmail() {
     console.log('press email');
   },
@@ -113,52 +167,40 @@ const AboutComponent = React.createClass({
 
   },
 
-  onPressOrg() {
-
-  },
-
-  renderOrg(org) {
-    return (
-      <TouchableOpacity onPress={this.onPressOrg}>
-        <Image style={styles.orgnizationsImage} source={{uri: org.avatar_url}}/>
-      </TouchableOpacity>
-    )
-  },
-
   render() {
-    const user = this.props.user;
+    const org = this._detailOrg;
 
-    let userCompany;
-    if (user.company) {
-      userCompany = (
+    let orgCompany;
+    if (org.company) {
+      orgCompany = (
         <View style={styles.iconTextContainer}>
           <Icon
             name='ion|ios-people-outline'
             size={ICON_SIZE}
             style={styles.icon}
             color={Colors.textGray}/>
-          <Text style={styles.profileInfoLocation}>{user.company}</Text>
+          <Text style={styles.profileInfoLocation}>{org.company}</Text>
         </View>
       )
     }
 
-    let userLocation;
-    if (user.location) {
-      userLocation = (
+    let orgLocation;
+    if (org.location) {
+      orgLocation = (
         <View style={styles.iconTextContainer}>
           <Icon
             name='ion|ios-location-outline'
             size={ICON_SIZE}
             style={styles.icon}
             color={Colors.textGray}/>
-          <Text style={styles.profileInfoLocation}>{user.location}</Text>
+          <Text style={styles.profileInfoLocation}>{org.location}</Text>
         </View>
       )
     }
 
-    let userEmail;
-    if (user.email) {
-      userEmail = (
+    let orgEmail;
+    if (org.email) {
+      orgEmail = (
         <View style={styles.iconTextContainer}>
           <Icon
             name='ion|ios-email-outline'
@@ -168,14 +210,14 @@ const AboutComponent = React.createClass({
           <Text
             style={styles.profileInfoEmailAndSite}
             onPress={this.onPressEmail}
-            >{user.email}</Text>
+            >{org.email}</Text>
         </View>
       )
     }
 
-    let userBlog;
-    if (user.blog) {
-      userBlog = (
+    let orgBlog;
+    if (org.blog) {
+      orgBlog = (
         <View style={styles.iconTextContainer}>
           <Icon
             name='ion|social-rss-outline'
@@ -185,24 +227,7 @@ const AboutComponent = React.createClass({
           <Text
             style={styles.profileInfoEmailAndSite}
             onPress={this.onPressBlog}
-            >{user.blog}</Text>
-        </View>
-      )
-    }
-
-    let userJoined;
-    if (user.userJoined) {
-      userJoined = <Text style={styles.profileInfoLocation}>{user.userJoined}</Text>;
-    }
-
-    let userOrg;
-    if (user.orgs) {
-      userOrg = (
-        <View style={{flexDirection: 'column'}}>
-          <Text style={styles.orgnizationsText}>Organizations</Text>
-          <View style={styles.orgnizations}>
-            {user.orgs.map(this.renderOrg)}
-          </View>
+            >{org.blog}</Text>
         </View>
       )
     }
@@ -210,71 +235,16 @@ const AboutComponent = React.createClass({
     return (
       <View style={[styles.scvContainerStyle]}>
         <View style={styles.profile}>
-          <Image style={styles.profileImage} source={{uri: user.avatar_url}}/>
+          <Image style={styles.profileImage} source={{uri: org.avatar_url}}/>
           <View style={styles.profileInfo}>
-            <Text style={styles.profileInfoName}>{user.name}</Text>
-            <Text style={styles.profileInfoNickName}>{user.login}</Text>
-            {userCompany}
-            {userLocation}
-            {userEmail}
-            {userBlog}
-            {userJoined}
+            <Text style={styles.profileInfoName}>{org.name}</Text>
+            <Text style={styles.profileInfoNickName}>{org.login}</Text>
+            {orgCompany}
+            {orgLocation}
+            {orgEmail}
+            {orgBlog}
           </View>
         </View>
-        {userOrg}
-        <View style={styles.status}>
-          <TouchableOpacity>
-            <View style={styles.statusFollowButton}>
-              <Icon
-                name='ion|ios-person-outline'
-                size={ICON_SIZE}
-                style={styles.icon}
-                color='white'/>
-              <Text style={styles.statusFollowButtonText}>Follow</Text>
-            </View>
-          </TouchableOpacity>
-          <View style={styles.statusInfo}>
-            <TouchableOpacity>
-              <View style={styles.statusInfoTouch}>
-                <Text style={styles.statusInfoTouchNum}>
-                  {user.followers}
-                </Text>
-                <Text style={styles.statusInfoTouchDes}>
-                  Followers
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={{flex: 1}}>
-              <View style={styles.statusInfoTouch}>
-                <Text style={styles.statusInfoTouchNum}>
-                  {user.public_repos}
-                </Text>
-                <Text style={styles.statusInfoTouchDes}>
-                  Repos
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={{flex: 1}}>
-              <View style={styles.statusInfoTouch}>
-                <Text style={styles.statusInfoTouchNum}>
-                  {user.following}
-                </Text>
-                <Text style={styles.statusInfoTouchDes}>
-                  Following
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-   )
-  }
-});
-
-const RepoListComponent = React.createClass({
-  render() {
-    return (
-      <View style={styles.card}>
       </View>
    )
   }
@@ -293,6 +263,7 @@ var styles = StyleSheet.create({
     justifyContent: 'flex-start',
     flexDirection: 'column',
     flex: 1,
+    backgroundColor:'lightGray',
   },
   iconTextContainer: {
     flexDirection: 'row',
@@ -308,7 +279,6 @@ var styles = StyleSheet.create({
   profileImage: {
     width: 110,
     height: 110,
-    backgroundColor: 'lightGray',
     borderRadius: 3,
   },
   profileInfo: {
@@ -337,69 +307,6 @@ var styles = StyleSheet.create({
     color: Colors.blue,
     fontSize: 12,
   },
-  orgnizations: {
-    flexDirection: 'row',
-    alignSelf: 'stretch',
-    flexWrap: 'wrap',
-    padding: 15,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(0,0,0,0.1)',
-  },
-  orgnizationsText: {
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginLeft: 15,
-  },
-  orgnizationsImage: {
-    width: 30,
-    height: 30,
-    marginLeft: 3,
-    borderRadius: 2,
-    marginBottom: 2,
-  },
-  status: {
-    flexDirection: 'column',
-    padding: 15,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(0,0,0,0.1)',
-    paddingBottom: 10,
-    paddingTop: 10,
-  },
-  statusFollowButton: {
-    alignSelf: 'stretch',
-    backgroundColor: '#5ca941',
-    height: 40,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 3,
-  },
-  statusFollowButtonText: {
-    color: 'white',
-  },
-  statusInfo: {
-    flexDirection: 'row',
-    padding: 15,
-    justifyContent: 'space-between',
-    paddingBottom: 0,
-  },
-  statusInfoTouch: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: 100,
-  },
-  statusInfoTouchNum: {
-    color: 'black',
-    fontWeight: 'bold',
-    fontSize: 17,
-  },
-  statusInfoTouchDes: {
-    color: 'gray',
-    fontSize: 13,
-    fontWeight: 'normal'
-  },
-
 });
 
-module.exports = UserComponent;
+module.exports = OrgComponent;

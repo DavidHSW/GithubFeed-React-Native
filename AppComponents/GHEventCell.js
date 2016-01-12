@@ -280,7 +280,6 @@ const styles = StyleSheet.create({
 
   username: {
     marginLeft: 10,
-    height: 19,
     color: '#4078C0',
     fontSize: 15,
   },
@@ -325,7 +324,6 @@ const styles = StyleSheet.create({
   createAt: {
     marginLeft: 10,
     marginTop: 2,
-    height: 14,
     fontSize: 11,
     color: '#BFBFBF',
   },
