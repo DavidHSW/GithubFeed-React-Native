@@ -79,6 +79,7 @@ class GithubService extends EventEmitter {
     // const uandp = Base64.encode('xiekw2010@gmail.com:z57482148');
     const uandp = 'eGlla3cyMDEwQGdtYWlsLmNvbTp6NTc0ODIxNDg=';
     console.log('basic is' + uandp);
+
     return (
       fetch(AUTH_URL_PATH, {
         method: 'POST',
@@ -183,12 +184,16 @@ class GithubService extends EventEmitter {
       const body = JSON.parse(res._bodyInit);
       let bodyMessge = body && body.message;
       if (bodyMessge === 'Not Found') {
-        SingleGHService.emit('needOnboard');
-        bodyMessge = 'User Not Found please check your username';
-        GLOBAL_USER = EMPTY_USER;
-        SingleGHService._setNeedSaveGlobalUser();
+        // SingleGHService.emit('needOnboard');
+        // bodyMessge = 'User Not Found please check your username';
+        // GLOBAL_USER = EMPTY_USER;
+        // SingleGHService._setNeedSaveGlobalUser();
       } else if (bodyMessge.indexOf('exceeded') !== -1) {
         bodyMessge = 'For a high rate request, please login';
+        SingleGHService.emit('needLogin');
+      } else if (bodyMessge.indexOf('Bad credentials') !== -1) {
+        SingleGHService.emit('needLogin');
+      } else if (bodyMessge.indexOf('Requires authentication') !== -1) {
         SingleGHService.emit('needLogin');
       }
 
@@ -219,6 +224,37 @@ class GithubService extends EventEmitter {
     return fetch(url, {
       headers: this.tokenHeader(),
     });
+  }
+
+  // repo: repo_full_name, action: 'GET', 'DELETE', 'PUT'
+  repoStarQuery(repo, action) {
+    const path = API_PATH + '/user/starred/' + repo;
+    const method = action || 'GET';
+    return fetch(path, {
+      method: method,
+      headers: this.tokenHeader(),
+    })
+  }
+
+  repoWatchQuery(repo, action) {
+    const path = API_PATH + '/repos/' + repo + '/subscription';
+    const method = action || 'GET';
+    return fetch(path, {
+      method: method,
+      headers: this.tokenHeader(),
+    })
+  }
+
+  userFollowQuery(targetUser, action) {
+    let path = API_PATH + '/users/' + GLOBAL_USER.username + '/following' + targetUser;
+    const method = action || 'GET';
+    if (this.isLogined() || method !== 'GET') {
+      path = API_PATH + '/user/following/' + targetUser;
+    }
+    return fetch(path, {
+      method: method,
+      headers: this.tokenHeader(),
+    })
   }
 }
 

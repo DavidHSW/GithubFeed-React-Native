@@ -21,7 +21,6 @@ const {
  const ICON_SIZE = 18;
 
 const UserComponent = React.createClass({
-  _detailUser: {},
   _headerHeight: 0,
 
   PropTypes: {
@@ -36,47 +35,7 @@ const UserComponent = React.createClass({
 
     return {
       dataSource: new ListView.DataSource(dataSourceParam),
-      userDetailLoaded: false,
-      userReposLoaded: false,
-      userOrgLoaded: false,
     };
-  },
-
-  componentWillMount() {
-    this._detailUser = this.props.user;
-    const userURL = this._detailUser.url;
-
-    GHService.fetchPromise(userURL)
-      .then(res => {
-        const resUser = JSON.parse(res._bodyInit);
-        this._detailUser = Object.assign(this._detailUser, resUser);
-        this.setState({
-          userDetailLoaded: true,
-        });
-
-        const repoURL = resUser.repos_url + '?sort=updated';
-        return GHService.fetchPromise(repoURL);
-      })
-      .then(res => {
-        const repos = JSON.parse(res._bodyInit);
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(repos),
-          userReposLoaded: true,
-        });
-
-        const orgURL = this._detailUser.organizations_url;
-        return GHService.fetchPromise(orgURL);
-      })
-      .then(res => {
-        const orgs = JSON.parse(res._bodyInit);
-        if (Array.isArray(orgs) && orgs.length > 0) {
-          this._detailUser.orgs = orgs;
-          this.setState({
-            userOrgLoaded: true,
-          });
-        }
-      })
-      .catch(err => {console.log('promise err', err);});
   },
 
   onOpenRepos() {
@@ -91,13 +50,26 @@ const UserComponent = React.createClass({
     this._headerHeight = e.nativeEvent.layout.height;
   },
 
+  onLoadDetailUser(user) {
+    const repoURL = user.repos_url + '?sort=updated';
+
+    GHService.fetchPromise(repoURL)
+      .then(res => {
+        const repos = JSON.parse(res._bodyInit);
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(repos),
+        });
+      })
+  },
+
   renderHeader() {
     return (
       <AboutComponent
-        user={this._detailUser}
+        user={this.props.user}
         onOpenRepos={this.onOpenRepos}
         onLayout={this.onHeaderLayout}
         navigator={this.props.navigator}
+        onLoadUser={this.onLoadDetailUser}
       />
     )
   },
@@ -117,8 +89,7 @@ const UserComponent = React.createClass({
         automaticallyAdjustContentInsets={false}
         contentInset={{top: 64, left: 0, bottom: 49, right: 0}}
         contentOffset={{x:0, y:-64}}
-        scrollRenderAheadDistance={50}
-      >
+        scrollRenderAheadDistance={50}>
       </ListView>
     )
   }
@@ -127,7 +98,22 @@ const UserComponent = React.createClass({
 const AboutComponent = React.createClass({
   PropTypes: {
     onOpenRepos: React.PropTypes.func,
+    /*
+     * Just the simplest user
+     * {id: 3621906, login: "dongxicheng",
+        gravatar_id: "",
+        url: "https://api.github.com/users/dongxicheng",
+        avatar_url: "https://avatars.githubusercontent.com/u/3621906?"
+        }
+     */
     user: React.PropTypes.object,
+    onLoadUser: React.PropTypes.func,
+  },
+
+  getInitialState() {
+    return {
+      user: this.props.user,
+    }
   },
 
   onPressEmail() {
@@ -143,20 +129,37 @@ const AboutComponent = React.createClass({
   },
 
   onFollow() {
-
+    const action = this.state.user.isFollowing ? 'DELETE' : 'PUT';
+    GHService.userFollowQuery(this.state.user.login, action)
+      .then(value => {
+        const status = value.status;
+        if (status < 400) {
+          this.state.user.isFollowing = !this.state.user.isFollowing ;
+          this.setState({
+            user: this.state.user,
+          });
+        }
+      })
+      .catch(err => {console.log('userFollowQuery error', err);})
   },
 
   onOpenFollowers() {
+    const url = this.state.user.followers_url;
+    if (!url) return;
+
     const user = {
-      url: this.props.user.followers_url,
+      url: url,
       title: 'Followers',
     }
     this.props.navigator.push({id: 'userList', obj: user});
   },
 
   onOpenFollowing() {
+    const url = this.state.user.url;
+    if (!url) return;
+
     const user = {
-      url: this.props.user.url + '/following',
+      url: url + '/following',
       title: 'Following',
     }
     this.props.navigator.push({id: 'userList', obj: user});
@@ -174,8 +177,45 @@ const AboutComponent = React.createClass({
     )
   },
 
-  render() {
+  componentWillMount() {
     const user = this.props.user;
+
+    GHService.fetchPromise(user.url)
+      .then(res => {
+        const resUser = JSON.parse(res._bodyInit);
+        const detailUser = Object.assign(this.state.user, resUser);
+        this.setState({
+          user: detailUser,
+        });
+
+        this.props.onLoadUser && this.props.onLoadUser(this.state.user);
+
+        return GHService.fetchPromise(detailUser.organizations_url);
+      })
+      .then(res => {
+        const orgs = JSON.parse(res._bodyInit);
+        if (Array.isArray(orgs) && orgs.length > 0) {
+          this.state.user.orgs = orgs;
+          this.setState({
+            user: this.state.user,
+          });
+        }
+      })
+      .catch(err => {console.log('About promise err', err);});
+
+    GHService.userFollowQuery(user.login)
+      .then(value => {
+        const status = value.status;
+        const isFollowing = status < 400;
+        this.state.user.isFollowing = isFollowing;
+        this.setState({
+          user: this.state.user,
+        });
+      });
+  },
+
+  render() {
+    const user = this.state.user;
 
     let userCompany;
     if (user.company) {
@@ -267,6 +307,30 @@ const AboutComponent = React.createClass({
       )
     }
 
+    const isFollowing = this.state.user.isFollowing;
+    let followBackgroundColor = '#5ca941';
+    let followContentColor = 'white';
+    let followAction = 'Follow';
+    if (isFollowing) {
+      followBackgroundColor = '#CECECE';
+      followContentColor = Colors.black;
+      followAction = 'Unfollow';
+    }
+    const followStatus = (
+      <TouchableOpacity onPress={this.onFollow}>
+        <View style={[styles.statusFollowButton,
+                      {backgroundColor: followBackgroundColor}]}>
+          <Icon
+            name='ion|ios-person-outline'
+            size={ICON_SIZE}
+            style={styles.icon}
+            color={followContentColor}/>
+          <Text style={[styles.statusFollowButtonText,
+                        {color: followContentColor}]}>{followAction}</Text>
+        </View>
+      </TouchableOpacity>
+    )
+
     return (
       <View style={[styles.scvContainerStyle]} {...this.props}>
         <View style={styles.profile}>
@@ -283,16 +347,7 @@ const AboutComponent = React.createClass({
         </View>
         {userOrg}
         <View style={styles.status}>
-          <TouchableOpacity onPress={this.onFollow}>
-            <View style={styles.statusFollowButton}>
-              <Icon
-                name='ion|ios-person-outline'
-                size={ICON_SIZE}
-                style={styles.icon}
-                color='white'/>
-              <Text style={styles.statusFollowButtonText}>Follow</Text>
-            </View>
-          </TouchableOpacity>
+          {followStatus}
           <View style={styles.statusInfo}>
             <TouchableOpacity onPress={this.onOpenFollowers}>
               <View style={styles.statusInfoTouch}>
@@ -339,6 +394,7 @@ var styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    backgroundColor: 'white'
   },
   scvContainerStyle: {
     justifyContent: 'flex-start',

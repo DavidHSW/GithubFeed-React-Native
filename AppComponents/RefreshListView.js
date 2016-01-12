@@ -124,7 +124,7 @@ const FloorListView = React.createClass({
       return CommonComponents.renderLoadingView();
     }
     return (
-      <View style={{flex: 1}} ref={CONTAINERREF}>
+      <View style={{flex: 1, backgroundColor: 'white'}} ref={CONTAINERREF}>
         <ListView
           ref={LISTVIEWREF}
           dataSource={this.state.dataSource}

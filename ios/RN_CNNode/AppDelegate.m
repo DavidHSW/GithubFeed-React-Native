@@ -85,7 +85,7 @@
   jsCodeLocation = [NSURL URLWithString:ipAddress];
 
   
-//  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"gitfeed" withExtension:@"jsbundle"];
+//  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 
   
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation moduleName:@"Github_RN" initialProperties:nil launchOptions:launchOptions];
@@ -95,7 +95,7 @@
   rootViewController.view = rootView;
   
 //  rootViewController = [NativePlayViewControllr new];
-
+  
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   

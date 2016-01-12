@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		008F07F31AC5B25A0029DE68 /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 008F07F21AC5B25A0029DE68 /* main.jsbundle */; };
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
 		00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302C01ABCB91800DB3ED1 /* libRCTImage.a */; };
@@ -22,6 +21,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		BE265F171C42637E009AC2FA /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = BE265F161C42637E009AC2FA /* main.jsbundle */; };
 		BE29C35F1BD6296100EAC526 /* PopoverManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29C35E1BD6296100EAC526 /* PopoverManager.m */; };
 		BE29C36C1BD6637F00EAC526 /* DXRefreshControl.m in Sources */ = {isa = PBXBuildFile; fileRef = BE29C36B1BD6637F00EAC526 /* DXRefreshControl.m */; };
 		BE6A49131BD7667B0012C18A /* UIView+TopBarMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = BE6A49121BD7667B0012C18A /* UIView+TopBarMessage.m */; };
@@ -35,7 +35,6 @@
 		BEE41A121C33AE5700278CB5 /* Material-Design-Iconic-Font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BEE41A0C1C33AE5700278CB5 /* Material-Design-Iconic-Font.ttf */; };
 		BEE41A131C33AE5700278CB5 /* zocial-regular-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BEE41A0D1C33AE5700278CB5 /* zocial-regular-webfont.ttf */; };
 		BEE41A141C33AE5700278CB5 /* octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BEE41A0E1C33AE5700278CB5 /* octicons.ttf */; };
-		BEEA5BB81C36CA05003C66D9 /* gitfeed.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = BEEA5BB71C36CA05003C66D9 /* gitfeed.jsbundle */; };
 		BEF368901BFC736D003DF66C /* DXRNUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = BEF3688F1BFC736D003DF66C /* DXRNUtils.m */; };
 		CAB811B981DA26E2A433577E /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B0A9B6DB06C486519294E4B9 /* libPods.a */; };
 /* End PBXBuildFile section */
@@ -121,7 +120,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTActionSheet.xcodeproj; path = "../node_modules/react-native/Libraries/ActionSheetIOS/RCTActionSheet.xcodeproj"; sourceTree = "<group>"; };
 		00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTGeolocation.xcodeproj; path = "../node_modules/react-native/Libraries/Geolocation/RCTGeolocation.xcodeproj"; sourceTree = "<group>"; };
 		00C302BB1ABCB91800DB3ED1 /* RCTImage.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTImage.xcodeproj; path = "../node_modules/react-native/Libraries/Image/RCTImage.xcodeproj"; sourceTree = "<group>"; };
@@ -144,6 +142,7 @@
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		92A5EAAFA498B64D6AA8915D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		B0A9B6DB06C486519294E4B9 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		BE265F161C42637E009AC2FA /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		BE29C35D1BD6296100EAC526 /* PopoverManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverManager.h; sourceTree = "<group>"; };
 		BE29C35E1BD6296100EAC526 /* PopoverManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverManager.m; sourceTree = "<group>"; };
 		BE29C36A1BD6637F00EAC526 /* DXRefreshControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DXRefreshControl.h; sourceTree = "<group>"; };
@@ -164,7 +163,6 @@
 		BEE41A0C1C33AE5700278CB5 /* Material-Design-Iconic-Font.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Material-Design-Iconic-Font.ttf"; sourceTree = "<group>"; };
 		BEE41A0D1C33AE5700278CB5 /* zocial-regular-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "zocial-regular-webfont.ttf"; sourceTree = "<group>"; };
 		BEE41A0E1C33AE5700278CB5 /* octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = octicons.ttf; sourceTree = "<group>"; };
-		BEEA5BB71C36CA05003C66D9 /* gitfeed.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gitfeed.jsbundle; sourceTree = "<group>"; };
 		BEF3688E1BFC736D003DF66C /* DXRNUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DXRNUtils.h; sourceTree = "<group>"; };
 		BEF3688F1BFC736D003DF66C /* DXRNUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DXRNUtils.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -269,7 +267,6 @@
 			isa = PBXGroup;
 			children = (
 				BE5E81661BCDF67C00BA8AB4 /* Classes */,
-				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				BE95BCAA1BD8E7F300B69DD1 /* NativePlayViewControllr.h */,
@@ -336,7 +333,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				BEEA5BB71C36CA05003C66D9 /* gitfeed.jsbundle */,
+				BE265F161C42637E009AC2FA /* main.jsbundle */,
 				BEE41A091C33AE5700278CB5 /* FontAwesome.otf */,
 				BEE41A0A1C33AE5700278CB5 /* foundation-icons.ttf */,
 				BEE41A0B1C33AE5700278CB5 /* ionicons.ttf */,
@@ -589,11 +586,10 @@
 				BEE41A0F1C33AE5700278CB5 /* FontAwesome.otf in Resources */,
 				BEE41A101C33AE5700278CB5 /* foundation-icons.ttf in Resources */,
 				BEE41A111C33AE5700278CB5 /* ionicons.ttf in Resources */,
-				BEEA5BB81C36CA05003C66D9 /* gitfeed.jsbundle in Resources */,
 				BEE41A121C33AE5700278CB5 /* Material-Design-Iconic-Font.ttf in Resources */,
 				BEE41A131C33AE5700278CB5 /* zocial-regular-webfont.ttf in Resources */,
 				BEE41A141C33AE5700278CB5 /* octicons.ttf in Resources */,
-				008F07F31AC5B25A0029DE68 /* main.jsbundle in Resources */,
+				BE265F171C42637E009AC2FA /* main.jsbundle in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 			);

@@ -92,8 +92,8 @@ const WEBVIEWREF = 'webview';
 const LoginComponent = React.createClass({
   getInitialState() {
     return {
-      username: '',
-      password: '',
+      username: GHService.currentUser().username,
+      password: GHService.currentUser().password,
       logining: false,
     }
   },
@@ -154,7 +154,7 @@ const LoginComponent = React.createClass({
               style={styles.textInput}
               returnKeyType={'next'}
               onChangeText={this.onNameChange}
-              defaultValue={GHService.currentUser().username}
+              defaultValue={this.state.username}
             />
             <Text style={styles.nameAndPwd}>
               Password
@@ -165,7 +165,7 @@ const LoginComponent = React.createClass({
               onSubmitEditing={this.submitLogin}
               onChangeText={this.onPwdChange}
               secureTextEntry={true}
-              defaultValue={GHService.currentUser().password}
+              defaultValue={this.state.password}
             />
             <TouchableHighlight
               style={styles.confirm}

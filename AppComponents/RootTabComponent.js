@@ -28,7 +28,7 @@ const RootTabBar = React.createClass({
               selectedTab: TABBABIDS[0],
             });
           }}>
-          <FeedComponent/>
+          {Routes.navigator('feed')}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="Watching"
@@ -40,7 +40,7 @@ const RootTabBar = React.createClass({
               selectedTab: TABBABIDS[1],
             });
           }}>
-          <NavigatorIOS style={{flex: 1}} initialRoute={Routes.watchings()}/>
+          {Routes.navigator('feed')}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="Trend"
@@ -53,7 +53,7 @@ const RootTabBar = React.createClass({
               selectedTab: TABBABIDS[2],
             });
           }}>
-          <NavigatorIOS style={{flex: 1}} initialRoute={Routes.trends()}/>
+          {Routes.navigator('feed')}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="Setting"
@@ -65,7 +65,7 @@ const RootTabBar = React.createClass({
               selectedTab: TABBABIDS[3],
             });
           }}>
-          <NavigatorIOS style={{flex: 1}} initialRoute={Routes.personal()}/>
+          {Routes.navigator('feed')}
         </TabBarIOS.Item>
       </TabBarIOS>
     )
