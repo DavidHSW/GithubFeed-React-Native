@@ -259,32 +259,32 @@ const AboutComponent = React.createClass({
   }
 });
 
-const OrgTabBar = React.createClass({
-  render() {
-    return (
-      <View style={styles.tabs}>
-        <TouchableOpacity>
-            <View><Text>t1</Text></View>
-        </TouchableOpacity>
-        <TouchableOpacity>
-            <View><Text>t2</Text></View>
-        </TouchableOpacity>
-      </View>
-   )
-  }
-});
+// const OrgTabBar = React.createClass({
+//   render() {
+//     return (
+//       <View style={styles.tabs}>
+//         <TouchableOpacity>
+//             <View><Text>t1</Text></View>
+//         </TouchableOpacity>
+//         <TouchableOpacity>
+//             <View><Text>t2</Text></View>
+//         </TouchableOpacity>
+//       </View>
+//    )
+//   }
+// });
 
 var styles = StyleSheet.create({
-  tabs: {
-    height: 45,
-    flexDirection: 'row',
-    paddingTop: 5,
-    borderWidth: 1,
-    borderTopWidth: 0,
-    borderLeftWidth: 0,
-    borderRightWidth: 0,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
-  },
+  // tabs: {
+  //   height: 45,
+  //   flexDirection: 'row',
+  //   paddingTop: 5,
+  //   borderWidth: 1,
+  //   borderTopWidth: 0,
+  //   borderLeftWidth: 0,
+  //   borderRightWidth: 0,
+  //   borderBottomColor: 'rgba(0,0,0,0.05)',
+  // },
   icon: {
     width: ICON_SIZE,
     height: ICON_SIZE,
