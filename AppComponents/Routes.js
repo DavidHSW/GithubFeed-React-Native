@@ -134,7 +134,12 @@ const routes = {
       case 'userList':
         return <UserListComponent userListURL={route.obj.url} navigator={navigator}/>;
       case 'login':
-        return <LoginComponent navigator={navigator}/>;
+        return (
+          <LoginComponent
+            navigator={navigator}
+            nextPromise={route.nextPromise}
+            nextPromiseAction={route.nextPromiseAction}/>
+        )
       case 'org':
         return <OrgComponent navigator={navigator} org={route.obj}/>;
     }

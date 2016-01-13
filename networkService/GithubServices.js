@@ -194,6 +194,39 @@ class GithubService extends EventEmitter {
     }
   }
 
+  checkNeedLoginWithPromise(promiseFunc, action, navigator) {
+    if (!this.isLogined()) {
+      const promise = promiseFunc();
+      promise
+        .then(value => {
+          console.log('checkNeedLoginWithPromise value is', value);
+          if (!value._bodyInit || value._bodyInit.length == 0) return;
+          const json = JSON.parse(value._bodyInit);
+          const bodyMessage = json.message;
+          if (!bodyMessage) return;
+
+          const loginMessages = [
+            'exceeded',
+            'Bad credentials',
+            'Requires authentication'
+          ];
+          const needLogin = loginMessages.some(item => bodyMessage.indexOf(item) < 0);
+          console.log('needLogin', needLogin, bodyMessage);
+          if (needLogin) {
+            navigator.push({
+              id: 'login',
+              sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+              title: 'Please Login now',
+              nextPromise: promiseFunc,
+              nextPromiseAction: action,
+            });
+          }
+        })
+    } else {
+      return promiseFunc().then(action);
+    }
+  }
+
   getRepoHTMLString(userAndRepo) {
     let tokenHeader = this.tokenHeader();
     tokenHeader.Accept = 'application/vnd.github.VERSION.raw';

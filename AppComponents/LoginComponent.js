@@ -17,6 +17,12 @@ const {
 const WEBVIEWREF = 'webview';
 
 const LoginComponent = React.createClass({
+  PropTypes: {
+    /* A next action promise */
+    nextPromise: React.PropTypes.object,
+    nextPromiseAction: React.PropTypes.object,
+  },
+
   getInitialState() {
     return {
       username: GHService.currentUser().username,
@@ -36,7 +42,18 @@ const LoginComponent = React.createClass({
     console.log('submitLogin');
     GHService.login(state.username, state.password, (user) => {
       this.props.navigator.pop();
-    });
+    })
+      .then(() => {
+        const nextPromise = this.props.nextPromise && this.props.nextPromise();
+        const nextPromiseAction = this.props.nextPromiseAction;
+        if (nextPromise) {
+          nextPromise.then(nextPromiseAction)
+        }
+        console.log('after login');
+      })
+      .catch(err => {
+        console.log('login error', err);
+      })
   },
 
   onNameChange(text) {

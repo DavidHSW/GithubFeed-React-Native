@@ -130,21 +130,18 @@ const AboutComponent = React.createClass({
 
   onFollow() {
     const action = this.state.user.isFollowing ? 'DELETE' : 'PUT';
-    GHService.userFollowQuery(this.state.user.login, action)
-      .then(value => {
-        const status = value.status;
-        if (status < 400) {
-          this.state.user.isFollowing = !this.state.user.isFollowing ;
-          this.setState({
-            user: this.state.user,
-          });
-        } else {
-          console.log('userFollowQuery value is', value);
-          const json = JSON.parse(value._bodyInit);
-          GHService.checkNeedLogin(json.message, this.props.navigator);
-        }
-      })
-      .catch(err => {console.log('userFollowQuery error', err);})
+    const followPromise = () => GHService.userFollowQuery(this.state.user.login, action);
+    const followThen = (value) => {
+      const status = value.status;
+      if (status < 400) {
+        this.state.user.isFollowing = !this.state.user.isFollowing ;
+        this.setState({
+          user: this.state.user,
+        });
+      }
+    }
+
+    GHService.checkNeedLoginWithPromise(followPromise, followThen, this.props.navigator)
   },
 
   onOpenFollowers() {

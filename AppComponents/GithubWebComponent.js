@@ -170,25 +170,25 @@ const RepoToolBar = React.createClass({
   onPressWatch() {
     const isWatch = this.state.watchStatus == 'Unwatch';
     const toggleAction = isWatch ? 'DELETE' : 'PUT';
+    const watchQuery = () => {
+      return GHService.repoWatchQuery(this._repoRes.full_name, toggleAction);
+    };
+    const watchThen = (value) => {
+      console.log('watch response', value);
+      const status = value.status;
+      const isNowStar = this.state.watchStatus == 'Unwatch';
+      const starStatus = isNowStar ? 'Watch' : 'Unwatch';
+      const toggleCount = isNowStar ? -1 : 1;
 
-    GHService.repoWatchQuery(this._repoRes.full_name, toggleAction)
-      .then(value => {
-        console.log('watch response', value);
-        const status = value.status;
-        const isNowStar = this.state.watchStatus == 'Unwatch';
-        const starStatus = isNowStar ? 'Watch' : 'Unwatch';
-        const toggleCount = isNowStar ? -1 : 1;
+      if (status < 400) {
+        this.setState({
+          watchStatus: starStatus,
+          watchNumber: this.state.watchNumber + toggleCount
+        });
+      }
+    };
 
-        if (status < 400) {
-          this.setState({
-            watchStatus: starStatus,
-            watchNumber: this.state.watchNumber + toggleCount
-          });
-        } else {
-          const json = JSON.parse(value._bodyInit);
-          GHService.checkNeedLogin(json.message, this.props.navigator);
-        }
-      })
+    GHService.checkNeedLoginWithPromise(watchQuery, watchThen, this.props.navigator)
   },
 
   onPressWatchers() {
@@ -202,24 +202,24 @@ const RepoToolBar = React.createClass({
   onPressStar() {
     const isStar = this.state.starStatus == 'Unstar';
     const toggleAction = isStar ? 'DELETE' : 'PUT';
+    const starQuery = () => {
+      return GHService.repoStarQuery(this._repoRes.full_name, toggleAction);
+    };
+    const watchThen = (value) => {
+      const status = value.status;
+      const isNowStar = this.state.starStatus == 'Unstar';
+      const starStatus = isNowStar ? 'Star' : 'Unstar';
+      const toggleCount = isNowStar ? -1 : 1;
 
-    GHService.repoStarQuery(this._repoRes.full_name, toggleAction)
-      .then(value => {
-        const status = value.status;
-        const isNowStar = this.state.starStatus == 'Unstar';
-        const starStatus = isNowStar ? 'Star' : 'Unstar';
-        const toggleCount = isNowStar ? -1 : 1;
+      if (status < 400) {
+        this.setState({
+          starStatus: starStatus,
+          starNumber: this.state.starNumber + toggleCount
+        });
+      }
+    };
 
-        if (status < 400) {
-          this.setState({
-            starStatus: starStatus,
-            starNumber: this.state.starNumber + toggleCount
-          });
-        } else {
-          const json = JSON.parse(value._bodyInit);
-          GHService.checkNeedLogin(json.message, this.props.navigator);
-        }
-      })
+    GHService.checkNeedLoginWithPromise(starQuery, watchThen, this.props.navigator)
   },
 
   onPressStarers() {
