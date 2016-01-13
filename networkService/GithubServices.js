@@ -3,6 +3,7 @@ const {EventEmitter} = require('events');
 const React = require('react-native');
 const DXUtils = require('../iosComponents/DXRNUtils');
 const MockFeedJSON = require('./mockFeed');
+const base64 = require('base-64');
 
 const {
   AsyncStorage,
@@ -73,6 +74,9 @@ class GithubService extends EventEmitter {
   }
 
   login(name, pwd, cb) {
+    const bytes = name.trim() + ':' + pwd.trim();
+    const encoded = base64.encode(bytes);
+    console.log('login encode is', encoded);
     // const uandp = Base64.encode('xiekw2010@gmail.com:z57482148');
     const uandp = 'eGlla3cyMDEwQGdtYWlsLmNvbTp6NTc0ODIxNDg=';
     console.log('basic is' + uandp);
@@ -112,7 +116,7 @@ class GithubService extends EventEmitter {
   }
 
   logout(cb) {
-    fetch(AUTH_URL_PATH + '/' + GLOBAL_TOKEN.id, {
+    fetch(AUTH_URL_PATH + '/' + GLOBAL_USER.tokenInfo.id, {
       method: 'DELETE',
       headers: this.tokenHeader()
     })
@@ -180,7 +184,7 @@ class GithubService extends EventEmitter {
       'Requires authentication'
     ];
     const needLogin = loginMessages.some(item => bobyMessage.indexOf(item) < 0);
-    console.log('needLogin', needLogin);
+    console.log('needLogin', needLogin, bobyMessage);
     if (needLogin) {
       navigator.push({
         id: 'login',
@@ -225,8 +229,12 @@ class GithubService extends EventEmitter {
   }
 
   repoWatchQuery(repo, action) {
-    const path = API_PATH + '/repos/' + repo + '/subscription';
+    let path = API_PATH + '/repos/' + repo + '/subscription';
     const method = action || 'GET';
+    console.log('watchquery path', path, method);
+    if (method != 'GET') {
+      path = API_PATH + '/user/subscriptions' + '/' + repo;
+    }
     return fetch(path, {
       method: method,
       headers: this.tokenHeader(),

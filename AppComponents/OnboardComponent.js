@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
     padding: 3,
     borderColor: Colors.borderColor,
     flex: 1,
-    textAlign: 'center',
   },
 
   go: {
