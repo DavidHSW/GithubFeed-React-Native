@@ -15,6 +15,66 @@ const {
   Image,
 } = React;
 
+const WEBVIEWREF = 'webview';
+
+const OnboardComponent = React.createClass({
+  propTypes: {
+    didOnboard: React.PropTypes.func,
+  },
+
+  getInitialState() {
+    return {
+      username: '',
+    }
+  },
+
+  submitOnboard() {
+    const state = this.state;
+    if (state.username.length == 0) return;
+
+    console.log('submitOnboard name is: ' + state.username);
+    GHService.onboard(state.username, this.props.didOnboard);
+  },
+
+  onNameChange(text) {
+    this.setState({
+      username: text,
+    });
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return false;
+  },
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Image
+          style={styles.welcomeImage}
+          source={require('../AppIcons/ios/iTunesArtwork.png')}/>
+        <View style={styles.loginContainer}>
+          <TextInput
+            style={styles.textInput}
+            returnKeyType={'done'}
+            onChangeText={this.onNameChange}
+            onSubmitEditing={this.submitOnboard}
+            placeholder={'your github username(NOT EMAIL)'}
+          />
+          <TouchableHighlight
+            style={styles.go}
+            onPress={this.submitOnboard}
+            underlayColor={Colors.backGray}
+            >
+              <Text style={[styles.nameAndPwd, {'textAlign': 'center'}]}>
+                Go!
+              </Text>
+          </TouchableHighlight>
+        </View>
+      </View>
+    )
+  },
+});
+
 const styles = StyleSheet.create({
   container: {
     top: 60,
@@ -69,60 +129,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     width: 40,
-  },
-});
-
-const WEBVIEWREF = 'webview';
-
-const OnboardComponent = React.createClass({
-  getInitialState() {
-    return {
-      username: '',
-    }
-  },
-
-  submitOnboard() {
-    const state = this.state;
-    if (state.username.length == 0) return;
-
-    console.log('submitOnboard name is: ' + state.username);
-    GHService.onboard(state.username);
-  },
-
-  onNameChange(text) {
-    this.setState({
-      username: text,
-    });
-  },
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return false;
-  },
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <Image style={styles.welcomeImage} source={require('../AppIcons/ios/iTunesArtwork.png')}/>
-        <View style={styles.loginContainer}>
-          <TextInput
-            style={styles.textInput}
-            returnKeyType={'done'}
-            onChangeText={this.onNameChange}
-            onSubmitEditing={this.submitOnboard}
-            placeholder={'your github username(NOT EMAIL)'}
-          />
-          <TouchableHighlight
-            style={styles.go}
-            onPress={this.submitOnboard}
-            underlayColor={Colors.backGray}
-            >
-              <Text style={[styles.nameAndPwd, {'textAlign': 'center'}]}>
-                Go!
-              </Text>
-          </TouchableHighlight>
-        </View>
-      </View>
-    )
   },
 });
 

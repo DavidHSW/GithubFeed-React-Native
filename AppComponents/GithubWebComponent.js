@@ -78,10 +78,12 @@ const GithubWebComponent = React.createClass({
   render() {
     console.log('render web');
     let repoToolBar;
+    let topInset = 64;
     if (this._isRepo) {
       repoToolBar = <RepoToolBar
                       URL={this.props.param.url}
                       navigator={this.props.navigator}/>;
+      topInset = 0;
     }
 
     return (
@@ -94,7 +96,7 @@ const GithubWebComponent = React.createClass({
           onNavigationStateChange={this.onNavigationStateChange}
           injectedJavaScript={hideJS}
           automaticallyAdjustContentInsets={false}
-          contentInset={{top: 0, left: 0, bottom: 49, right: 0}}
+          contentInset={{top: topInset, left: 0, bottom: 49, right: 0}}
           startInLoadingState={true}>
         </WebView>
         <WebToolBar

@@ -12,9 +12,7 @@ const {
 
 const API_PATH = 'https://api.github.com';
 const AUTH_URL_PATH = API_PATH + '/authorizations';
-
 const GH_USER_KEY = 'GH_USER_KEY';
-
 const EMPTY_TOKEN = {
   id: '',
   token: ''
@@ -54,19 +52,16 @@ class GithubService extends EventEmitter {
       );
   }
 
-  emitOnboard() {
-    this.emit('onboard');
-  }
-
   isOnboard() {
     return GLOBAL_USER.username.length > 0;
   }
 
-  onboard(username) {
+  onboard(username, cb) {
     GLOBAL_USER = EMPTY_USER;
     GLOBAL_USER.username = username;
-    SingleGHService.emitOnboard();
     SingleGHService._setNeedSaveGlobalUser();
+
+    cb && cb(GLOBAL_USER);
   }
 
   isLogined() {
@@ -76,16 +71,12 @@ class GithubService extends EventEmitter {
   login(name, pwd, cb) {
     const bytes = name.trim() + ':' + pwd.trim();
     const encoded = base64.encode(bytes);
-    console.log('login encode is', encoded);
-    // const uandp = Base64.encode('xiekw2010@gmail.com:z57482148');
-    const uandp = 'eGlla3cyMDEwQGdtYWlsLmNvbTp6NTc0ODIxNDg=';
-    console.log('basic is' + uandp);
 
     return (
       fetch(AUTH_URL_PATH, {
         method: 'POST',
         headers: {
-          'Authorization' : 'Basic ' + uandp,
+          'Authorization' : 'Basic ' + encoded,
           'User-Agent': 'GithubFeed'
         },
         body: JSON.stringify({
@@ -175,23 +166,6 @@ class GithubService extends EventEmitter {
         headers: this.tokenHeader(),
       })
     )
-  }
-
-  checkNeedLogin(bobyMessage, navigator) {
-    const loginMessages = [
-      'exceeded',
-      'Bad credentials',
-      'Requires authentication'
-    ];
-    const needLogin = loginMessages.some(item => bobyMessage.indexOf(item) < 0);
-    console.log('needLogin', needLogin, bobyMessage);
-    if (needLogin) {
-      navigator.push({
-        id: 'login',
-        sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-        title: 'Please Login now',
-      });
-    }
   }
 
   checkNeedLoginWithPromise(promiseFunc, action, navigator) {

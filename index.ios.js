@@ -24,10 +24,6 @@ const LoginState = {
 }
 
 const GitFeedApp = React.createClass({
-  mixins: [
-    LoginMixin,
-  ],
-
   getInitialState() {
     return {
       userState: LoginState.pending,
@@ -52,6 +48,12 @@ const GitFeedApp = React.createClass({
       })
   },
 
+  didOnboard() {
+    this.setState({
+      userState: LoginState.onboard,
+    });
+  },
+
   render() {
     let cp;
     switch (this.state.userState) {
@@ -64,21 +66,9 @@ const GitFeedApp = React.createClass({
       }
         break;
       case LoginState.unOnboard: {
-        cp = <OnboardComponent />;
+        cp = <OnboardComponent didOnboard={this.didOnboard}/>;
       }
         break;
-    }
-
-    if (this.state.onboarded || this.state.logined) {
-      cp = <RootTab />;
-    }
-
-    if (this.state.needOnboard) {
-      cp = <OnboardComponent />;
-    }
-
-    if (this.state.needLogin) {
-      cp = <LoginComponent />
     }
 
     return cp;

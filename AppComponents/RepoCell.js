@@ -31,18 +31,28 @@ const GHCell = React.createClass({
     const repoIcon = repo.fork ? 'ion|fork-repo' : 'ion|ios-bookmarks';
 
     return (
-      <TouchableHighlight onPress={this.openTargetRepo} underlayColor={'lightGray'}>
+      <TouchableHighlight
+        onPress={this.openTargetRepo}
+        underlayColor={'lightGray'}>
         <View style={styles.cellContentView}>
           <View style={styles.cellLeft}>
             <View style={styles.cellLeftRepo}>
-              <Icon size={ICON_SIZE} name={repoIcon} style={styles.cellLeftRepoIcon} color='gray'/>
+              <Icon
+                size={ICON_SIZE}
+                name={repoIcon}
+                style={styles.cellLeftRepoIcon}
+                color='gray'/>
               <Text style={styles.cellLeftRepoName}>{repo.name}</Text>
             </View>
             <Text style={styles.cellLeftRepoDesc}>{repo.description}</Text>
           </View>
           <View style={styles.cellRight}>
             <Text style={styles.cellRightText}>{repo.stargazers_count}</Text>
-            <Icon size={ICON_SIZE} name='ion|android-star' style={styles.cellLeftRepoIcon} color='gray'/>
+            <Icon
+              size={ICON_SIZE}
+              name='ion|android-star'
+              style={styles.cellLeftRepoIcon}
+              color='gray'/>
           </View>
         </View>
       </TouchableHighlight>

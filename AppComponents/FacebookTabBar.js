@@ -51,7 +51,10 @@ var FacebookTabBar = React.createClass({
     var isTabActive = this.props.activeTab === page;
 
     return (
-      <TouchableOpacity key={name} onPress={() => this.props.goToPage(page)} style={styles.tab}>
+      <TouchableOpacity
+        key={name}
+        onPress={() => this.props.goToPage(page)}
+        style={styles.tab}>
         <Icon name={name} size={30} color='#3B5998' style={styles.icon}
               ref={(icon) => { this.selectedTabIcons[page] = icon }}/>
         <Icon name={name} size={30} color='#ccc' style={styles.icon}

@@ -43,8 +43,10 @@ const FloorListView = React.createClass({
   },
 
   showError(error) {
-    DXTopMessage.showTopMessage(this.refs[CONTAINERREF], error.toString(), {offset: 64.0}, () => {
-    });
+    DXTopMessage.showTopMessage(
+      this.refs[CONTAINERREF],
+      error.toString(),
+      {offset: 64.0}, () => {});
   },
 
   componentDidMount() {
@@ -145,7 +147,11 @@ const FloorListView = React.createClass({
   renderFooter() {
     if (this.props.needNextPage()) {
       return (
-        <View style={{flex: 1, alignItems: 'center', height: 40, justifyContent: 'center'}} >
+        <View style={{
+            flex: 1,
+            alignItems: 'center',
+            height: 40, 
+            justifyContent: 'center'}} >
           <ActivityIndicatorIOS size='small' />
         </View>
       )
