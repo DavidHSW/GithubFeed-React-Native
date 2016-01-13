@@ -1,14 +1,16 @@
 const React = require('react-native');
 const { Icon } = require('react-native-icons');
+const cssVar = require('cssVar');
+const Colors = require('../commonComponents/Colors');
+const GHService = require('../networkService/GithubServices');
+
 const {UserComponent} = require('./UserComponent');
 const GHWebComponent = require('./GithubWebComponent');
 const UserListComponent = require('./UserListComponent');
 const FeedComponent = require('./FeedComponent');
-const cssVar = require('cssVar');
-const Colors = require('../commonComponents/Colors');
 const LoginComponent = require('./LoginComponent');
-const GHService = require('../networkService/GithubServices')
 const OrgComponent = require('./OrgComponent');
+const PersonalComponent = require('./PersonalComponent');
 
 const {
   Navigator,
@@ -90,6 +92,9 @@ const NavigationBarRouteMapper = {
       case 'org':
         title = 'org';
         break;
+      case 'me':
+        title = 'Me';
+        break;
     }
     return (
       <Text style={[styles.navBarText,
@@ -142,6 +147,8 @@ const routes = {
         )
       case 'org':
         return <OrgComponent navigator={navigator} org={route.obj}/>;
+      case 'me':
+        return <PersonalComponent navigator={navigator}/>;
     }
 
     return null;

@@ -10,6 +10,7 @@ const {
   View,
   TouchableOpacity,
   Text,
+  Image,
 } = React;
 
 const hideJS = `
@@ -232,10 +233,6 @@ const RepoToolBar = React.createClass({
     this.props.navigator.push({id: 'userList', obj: user});
   },
 
-  onPressFork() {
-
-  },
-
   onPressForkers() {
     const user = {
       url: this._repoRes.forks_url,
@@ -245,8 +242,27 @@ const RepoToolBar = React.createClass({
   },
 
   render() {
+    console.log('user is', this._repoRes);
+    const owner = this._repoRes && this._repoRes.owner;
+    let userCp;
+    if (owner) {
+      userCp = (
+        <TouchableOpacity onPress={() => {
+          this.props.navigator.push({id: 'user', obj: owner});
+        }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Image
+               style={{width: 35, height: 35, backgroundColor: 'lightGray'}}
+               source={{uri: owner.avatar_url}}/>
+             <Text style={[styles.actionText, {marginRight: 20}]}>{owner.login}</Text>
+          </View>
+        </TouchableOpacity>
+      )
+    }
+
     return (
       <View style={styles.repoToolBar}>
+        {userCp}
         <ActionComponent
           iconName={'ion|eye'}
           actionName={this.state.watchStatus}

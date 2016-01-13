@@ -56,19 +56,36 @@ class GithubService extends EventEmitter {
     return GLOBAL_USER.username.length > 0;
   }
 
+  /*
+   * cb(user, needLogin)
+  */
   onboard(username, cb) {
-    GLOBAL_USER = EMPTY_USER;
-    GLOBAL_USER.username = username;
-    SingleGHService._setNeedSaveGlobalUser();
+    const path = API_PATH + '/users/' + username.trim();
+    const validPromise = this.fetchPromise(path);
+    let needLogin = false;
+    validPromise.then(value => {
+      const status = value.status;
+      const isValid = status < 400;
+      const json = JSON.parse(value._bodyInit);
+      if (isValid) {
+        GLOBAL_USER.username = json.login;
+        GLOBAL_USER.avatar = json.avatar_url;
+        GLOBAL_USER.userId = json.id;
+        SingleGHService._setNeedSaveGlobalUser();
+      } else {
+        const bodyMessage = json.message;
+        needLogin = bodyMessage.indexOf('exceeded') >= 0;
+      }
 
-    cb && cb(GLOBAL_USER);
+      cb && cb(isValid ? GLOBAL_USER : null, needLogin);
+    });
   }
 
   isLogined() {
     return this.isOnboard() && GLOBAL_USER.tokenInfo.token.length > 0;
   }
 
-  login(name, pwd, cb) {
+  login(name, pwd) {
     const bytes = name.trim() + ':' + pwd.trim();
     const encoded = base64.encode(bytes);
 
@@ -87,21 +104,23 @@ class GithubService extends EventEmitter {
         })
       })
         .then((response) => {
+          const isValid = response.status < 400;
           const body = response._bodyInit;
           const jsonResult = JSON.parse(body);
-          const token = jsonResult.token;
-          const tokenId = jsonResult.id;
-          console.log('body is: ' + JSON.stringify(body), 'jsonResult is: ', jsonResult, 'token is: ', token);
-          let tokenInfo = {};
-          tokenInfo.id = tokenId;
-          tokenInfo.token = token;
-          GLOBAL_USER.tokenInfo = tokenInfo;
-          GLOBAL_USER.username = name;
-          GLOBAL_USER.password = pwd;
-
-          cb && cb(GLOBAL_USER);
-
-          return SingleGHService._setNeedSaveGlobalUser();
+          if (isValid) {
+            const token = jsonResult.token;
+            const tokenId = jsonResult.id;
+            console.log('body is: ' + JSON.stringify(body), 'jsonResult is: ', jsonResult, 'token is: ', token);
+            let tokenInfo = {};
+            tokenInfo.id = tokenId;
+            tokenInfo.token = token;
+            GLOBAL_USER.tokenInfo = tokenInfo;
+            GLOBAL_USER.username = name;
+            GLOBAL_USER.password = pwd;
+            return SingleGHService._setNeedSaveGlobalUser();
+          } else {
+            throw new Error(jsonResult.message);
+          }
         })
     )
   }
@@ -120,6 +139,8 @@ class GithubService extends EventEmitter {
     DXUtils.clearCookie();
 
     cb && cb();
+
+    SingleGHService.emit('didLogout');
   }
 
   tokenHeader() {

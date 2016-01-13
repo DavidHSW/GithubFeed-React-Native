@@ -21,6 +21,7 @@ const LoginComponent = React.createClass({
     /* A next action promise */
     nextPromise: React.PropTypes.object,
     nextPromiseAction: React.PropTypes.object,
+    didLogin: React.PropTypes.func,
   },
 
   getInitialState() {
@@ -28,6 +29,7 @@ const LoginComponent = React.createClass({
       username: GHService.currentUser().username,
       password: GHService.currentUser().password,
       logining: false,
+      loginError: null,
     }
   },
 
@@ -38,12 +40,14 @@ const LoginComponent = React.createClass({
 
     this.setState({
       logining: true,
+      loginError: null,
     });
     console.log('submitLogin');
-    GHService.login(state.username, state.password, (user) => {
-      this.props.navigator.pop();
-    })
+    GHService.login(state.username, state.password)
       .then(() => {
+        this.props.navigator && this.props.navigator.pop();
+        this.props.didLogin && this.props.didLogin();
+
         const nextPromise = this.props.nextPromise && this.props.nextPromise();
         const nextPromiseAction = this.props.nextPromiseAction;
         if (nextPromise) {
@@ -53,6 +57,14 @@ const LoginComponent = React.createClass({
       })
       .catch(err => {
         console.log('login error', err);
+        this.setState({
+          loginError: err,
+        });
+      })
+      .done(() => {
+        this.setState({
+          logining: false,
+        });
       })
   },
 
@@ -83,8 +95,18 @@ const LoginComponent = React.createClass({
       )
     }
 
+    let errorDesc;
+    if (this.state.loginError) {
+      errorDesc = (
+        <Text style={styles.errorDesc}>
+          {this.state.loginError.message}
+        </Text>
+      );
+    }
+
     return (
       <View style={{backgroundColor: 'white'}}>
+        {errorDesc}
         <View style={styles.loginCard}>
           <View style={styles.up}>
             <Text style={styles.introText}>
@@ -133,7 +155,7 @@ const styles = StyleSheet.create({
   loginCard: {
     height: 250,
     margin: 20,
-    marginTop: 80,
+    marginTop: 40,
     borderWidth: 1,
     borderColor: Colors.borderColor,
     borderRadius: 2,
@@ -199,6 +221,12 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     borderColor: Colors.borderColor,
   },
+
+  errorDesc: {
+    color: Colors.red,
+    alignSelf: 'center',
+    marginTop: 40,
+  }
 });
 
 module.exports = LoginComponent

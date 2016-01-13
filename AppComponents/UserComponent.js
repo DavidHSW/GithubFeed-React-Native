@@ -121,11 +121,11 @@ const AboutComponent = React.createClass({
   },
 
   onPressBlog() {
-
-  },
-
-  onPressOrg() {
-    this.props.navigator.push({id: 'org', obj: user});
+    const blog = {
+      html: this.state.user.blog,
+      title: this.state.user.name + "'s blog"
+    }
+    this.props.navigator.push({id: 'web', obj: blog})
   },
 
   onFollow() {

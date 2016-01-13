@@ -25,6 +25,8 @@ const OnboardComponent = React.createClass({
   getInitialState() {
     return {
       username: '',
+      loginSuc: true,
+      loading: false,
     }
   },
 
@@ -32,8 +34,19 @@ const OnboardComponent = React.createClass({
     const state = this.state;
     if (state.username.length == 0) return;
 
-    console.log('submitOnboard name is: ' + state.username);
-    GHService.onboard(state.username, this.props.didOnboard);
+    this.setState({
+      loading: true,
+      loginSuc: true,
+    });
+
+    GHService.onboard(state.username, (user, needLogin) => {
+      this.setState({
+        loginSuc: user != null,
+        loading: false,
+      });
+
+      this.props.didOnboard && this.props.didOnboard(user, needLogin);
+    });
   },
 
   onNameChange(text) {
@@ -43,10 +56,26 @@ const OnboardComponent = React.createClass({
   },
 
   shouldComponentUpdate(nextProps, nextState) {
-    return false;
+    const loginSuc = nextState.loginSuc != this.state.loginSuc;
+    const loading = nextState.loading != this.state.loading;
+
+    return loginSuc || loading;
   },
 
   render() {
+    let failedDesc;
+    if (!this.state.loginSuc) {
+      failedDesc = (
+        <Text
+          style={{color: Colors.red}}>Oops, onboard failed, check your user name
+        </Text>
+      );
+    }
+    let loadingCp;
+    if (this.state.loading) {
+      loadingCp = <ActivityIndicatorIOS/>
+    }
+
     return (
       <View style={styles.container}>
         <Image
@@ -70,6 +99,8 @@ const OnboardComponent = React.createClass({
               </Text>
           </TouchableHighlight>
         </View>
+        {loadingCp}
+        {failedDesc}
       </View>
     )
   },
