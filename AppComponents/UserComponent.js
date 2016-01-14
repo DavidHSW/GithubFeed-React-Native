@@ -183,7 +183,6 @@ const AboutComponent = React.createClass({
 
   componentWillMount() {
     const user = this.props.user;
-
     GHService.fetchPromise(user.url)
       .then(res => {
         const resUser = JSON.parse(res._bodyInit);
@@ -216,6 +215,38 @@ const AboutComponent = React.createClass({
           user: this.state.user,
         });
       });
+  },
+
+  followButton() {
+    const currentUser = GHService.currentUser();
+    if (currentUser.login == this.state.user.login) {
+      return null;
+    }
+    const isFollowing = this.state.user.isFollowing;
+    let followBackgroundColor = '#5ca941';
+    let followContentColor = 'white';
+    let followAction = 'Follow';
+    if (isFollowing) {
+      followBackgroundColor = '#CECECE';
+      followContentColor = Colors.black;
+      followAction = 'Unfollow';
+    }
+    const followStatus = (
+      <TouchableOpacity onPress={this.onFollow}>
+        <View style={[styles.statusFollowButton,
+                      {backgroundColor: followBackgroundColor}]}>
+          <Icon
+            name='ion|ios-person-outline'
+            size={ICON_SIZE}
+            style={styles.icon}
+            color={followContentColor}/>
+          <Text style={[styles.statusFollowButtonText,
+                        {color: followContentColor}]}>{followAction}</Text>
+        </View>
+      </TouchableOpacity>
+    )
+
+    return followStatus;
   },
 
   render() {
@@ -311,29 +342,7 @@ const AboutComponent = React.createClass({
       )
     }
 
-    const isFollowing = this.state.user.isFollowing;
-    let followBackgroundColor = '#5ca941';
-    let followContentColor = 'white';
-    let followAction = 'Follow';
-    if (isFollowing) {
-      followBackgroundColor = '#CECECE';
-      followContentColor = Colors.black;
-      followAction = 'Unfollow';
-    }
-    const followStatus = (
-      <TouchableOpacity onPress={this.onFollow}>
-        <View style={[styles.statusFollowButton,
-                      {backgroundColor: followBackgroundColor}]}>
-          <Icon
-            name='ion|ios-person-outline'
-            size={ICON_SIZE}
-            style={styles.icon}
-            color={followContentColor}/>
-          <Text style={[styles.statusFollowButtonText,
-                        {color: followContentColor}]}>{followAction}</Text>
-        </View>
-      </TouchableOpacity>
-    )
+    const followStatus = this.followButton();
 
     return (
       <View style={[styles.scvContainerStyle]} {...this.props}>

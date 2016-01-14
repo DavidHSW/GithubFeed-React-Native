@@ -1,7 +1,6 @@
 const React = require('react-native');
 const GHService = require('../networkService/GithubServices');
 const CommonComponents = require('../commonComponents/CommonComponents');
-const ScrollableTabView = require('react-native-scrollable-tab-view');
 const { Icon, } = require('react-native-icons');
 const Colors = require('../commonComponents/Colors');
 
@@ -14,18 +13,49 @@ const {
   TouchableHighlight,
   Image,
   TouchableOpacity,
+  Navigator,
+  ActionSheetIOS,
 } = React;
 
- const ICON_SIZE = 30;
+const ICON_SIZE = 30;
 
 const PersonComponent = React.createClass({
   avatarLoadEnd(e) {
     console.log('onImage load end', e);
   },
 
+  pressLogin() {
+    const isLogined = GHService.isLogined();
+    if (isLogined) return;
+
+    this.props.navigator.push({
+      id: 'login',
+      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+      title: 'Please Login now',
+    });
+  },
+
+  pressLogout() {
+    ActionSheetIOS.showActionSheetWithOptions({
+      title: 'Are you sure to leave?',
+      options:['logout', 'cancel'],
+      cancelButtonIndex: 1,
+      destructiveButtonIndex: 0,
+    },
+    (buttonIndex) => {
+      if (buttonIndex == 0) {
+        GHService.logout();
+      }
+    });
+  },
+
   render() {
     const user = GHService.currentUser();
-    console.log('user', user);
+    const isLogined = GHService.isLogined();
+    const stateText = isLogined ? 'Logined' : 'Better Press to Login';
+    const stateColor = isLogined ? Colors.green : 'orange';
+    const logoutColor = isLogined ? Colors.red : 'orange';
+    const avatarURL = user.avatar || 'a';
     return (
       <ScrollView
         style={styles.container}
@@ -33,17 +63,25 @@ const PersonComponent = React.createClass({
         contentInset={{top: 64, left: 0, bottom: 49, right: 0}}
         contentOffset={{x:0, y:-64}}
         >
-        <TouchableHighlight underlayColor={'lightGray'} style={styles.userTouch}>
+        <TouchableHighlight
+          underlayColor={'lightGray'}
+          style={styles.userTouch}
+          onPress={() => this.props.navigator.push({id: 'user', obj: user})}>
           <View style={styles.user}>
             <Image
-              source={{uri: user.avatar}}
+              source={{uri: avatarURL}}
               style={styles.avatar}
               onLoadEnd={this.avatarLoadEnd}/>
             <View style={styles.nameInfo}>
               <Text style={styles.name}>
-                {user.username}
+                {user.login}
               </Text>
             </View>
+            <Text
+              style={[styles.loginState, {color: stateColor}]}
+              onPress={this.pressLogin}>
+              {stateText}
+            </Text>
             <Icon
               name='ion|ios-arrow-right'
               size={ICON_SIZE}
@@ -51,25 +89,13 @@ const PersonComponent = React.createClass({
               color={Colors.textGray}/>
             </View>
         </TouchableHighlight>
-        <TouchableHighlight underlayColor={'lightGray'} style={styles.userTouch}>
-          <View style={styles.user}>
-            <Icon
-              name='ion|ios-cog'
-              size={ICON_SIZE}
-              style={styles.arrow}
-              color={Colors.blue}/>
-            <View style={styles.nameInfo}>
-              <Text style={styles.name}>
-                Settings
-              </Text>
-            </View>
-            <Icon
-              name='ion|ios-arrow-right'
-              size={ICON_SIZE}
-              style={styles.arrow}
-              color={Colors.textGray}/>
-          </View>
-        </TouchableHighlight>
+        <TouchableOpacity
+          style={[styles.logout, {backgroundColor: logoutColor}]}
+          onPress={this.pressLogout}>
+          <Text style={styles.logoutText}>
+            Logout
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     );
   }
@@ -121,6 +147,20 @@ var styles = StyleSheet.create({
   settings: {
     height: 44,
   },
+  logout: {
+    height: 44,
+    borderRadius: 3,
+    margin: 10,
+    marginTop: 40,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logoutText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 17,
+  }
 });
 
 module.exports = PersonComponent;

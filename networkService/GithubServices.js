@@ -18,10 +18,11 @@ const EMPTY_TOKEN = {
   token: ''
 };
 const EMPTY_USER = {
-  username: '',
+  login: '',
   password: '',
   avatar: '',
   userId: '',
+  url: '',
   tokenInfo: EMPTY_TOKEN,
 };
 let GLOBAL_USER = EMPTY_USER;
@@ -53,7 +54,7 @@ class GithubService extends EventEmitter {
   }
 
   isOnboard() {
-    return GLOBAL_USER.username.length > 0;
+    return GLOBAL_USER.login.length > 0;
   }
 
   /*
@@ -68,9 +69,11 @@ class GithubService extends EventEmitter {
       const isValid = status < 400;
       const json = JSON.parse(value._bodyInit);
       if (isValid) {
-        GLOBAL_USER.username = json.login;
+        GLOBAL_USER.login = json.login;
         GLOBAL_USER.avatar = json.avatar_url;
         GLOBAL_USER.userId = json.id;
+        GLOBAL_USER.url = json.url;
+        Object.assign(GLOBAL_USER, json);
         SingleGHService._setNeedSaveGlobalUser();
       } else {
         const bodyMessage = json.message;
@@ -106,20 +109,37 @@ class GithubService extends EventEmitter {
         .then((response) => {
           const isValid = response.status < 400;
           const body = response._bodyInit;
-          const jsonResult = JSON.parse(body);
+          const json = JSON.parse(body);
           if (isValid) {
-            const token = jsonResult.token;
-            const tokenId = jsonResult.id;
-            console.log('body is: ' + JSON.stringify(body), 'jsonResult is: ', jsonResult, 'token is: ', token);
+            const token = json.token;
+            const tokenId = json.id;
+            console.log('body is: ' + JSON.stringify(body), 'json is: ', json, 'token is: ', token);
             let tokenInfo = {};
             tokenInfo.id = tokenId;
             tokenInfo.token = token;
             GLOBAL_USER.tokenInfo = tokenInfo;
-            GLOBAL_USER.username = name;
+            GLOBAL_USER.Login = name;
             GLOBAL_USER.password = pwd;
-            return SingleGHService._setNeedSaveGlobalUser();
+            GLOBAL_USER.url = json.url;
+
+            const path = API_PATH + '/users/' + GLOBAL_USER.Login.trim();
+            return this.fetchPromise(path);
           } else {
-            throw new Error(jsonResult.message);
+            throw new Error(json.message);
+          }
+        })
+        .then(value => {
+          const status = value.status;
+          const isValid = status < 400;
+          const json = JSON.parse(value._bodyInit);
+          if (isValid) {
+            GLOBAL_USER.login = json.login;
+            GLOBAL_USER.avatar = json.avatar_url;
+            GLOBAL_USER.userId = json.id;
+            GLOBAL_USER.url = json.url;
+            Object.assign(GLOBAL_USER, json);
+
+            return SingleGHService._setNeedSaveGlobalUser();
           }
         })
     )
@@ -168,7 +188,7 @@ class GithubService extends EventEmitter {
       });
     }
 
-    let feedsURL = API_PATH + '/users/' + GLOBAL_USER.username + '/received_events';
+    let feedsURL = API_PATH + '/users/' + GLOBAL_USER.login + '/received_events';
     if (page && page > 0) {
       feedsURL +=  '?page=' + page;
     }
@@ -270,7 +290,7 @@ class GithubService extends EventEmitter {
   }
 
   userFollowQuery(targetUser, action) {
-    let path = API_PATH + '/users/' + GLOBAL_USER.username + '/following' + targetUser;
+    let path = API_PATH + '/users/' + GLOBAL_USER.login + '/following' + targetUser;
     const method = action || 'GET';
     if (this.isLogined() || method !== 'GET') {
       path = API_PATH + '/user/following/' + targetUser;

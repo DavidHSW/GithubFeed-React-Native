@@ -53,16 +53,6 @@ const NavigationBarRouteMapper = {
         )
       }
         break;
-      case 'feed': {
-        rightButton = (
-          <TouchableOpacity onPress={() => GHService.logout()}>
-            <Text style={styles.navBarText}>
-              logout
-            </Text>
-          </TouchableOpacity>
-        )
-      }
-        break;
       default:
     }
 
@@ -89,6 +79,7 @@ const NavigationBarRouteMapper = {
         break;
       case 'login':
         title = route.title;
+        break;
       case 'org':
         title = 'org';
         break;

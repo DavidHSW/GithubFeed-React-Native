@@ -26,7 +26,7 @@ const LoginComponent = React.createClass({
 
   getInitialState() {
     return {
-      username: GHService.currentUser().username,
+      username: GHService.currentUser().login,
       password: GHService.currentUser().password,
       logining: false,
       loginError: null,
@@ -35,7 +35,6 @@ const LoginComponent = React.createClass({
 
   submitLogin() {
     const state = this.state;
-    console.log('name & pwd is: ' + this.state.username + this.state.password);
     if (this.state.logining) return;
 
     this.setState({
@@ -155,7 +154,7 @@ const styles = StyleSheet.create({
   loginCard: {
     height: 250,
     margin: 20,
-    marginTop: 40,
+    marginTop: 64,
     borderWidth: 1,
     borderColor: Colors.borderColor,
     borderRadius: 2,

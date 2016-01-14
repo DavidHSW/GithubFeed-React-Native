@@ -102,10 +102,6 @@ const GHCell = React.createClass({
     this.props.navigator.push({id: 'user', obj: actor});
   },
 
-  openTargetUser() {
-
-  },
-
   openWebEvent() {
     const ghEvent = this.props.ghEvent;
     let targetRepo = ghEvent.repo;
@@ -125,7 +121,7 @@ const GHCell = React.createClass({
       }
         break;
       default:
-        targetRepo.html = 'https://github.com/' + this.props.repo.name + '/blob/master/README.md';
+        targetRepo.html = 'https://github.com';
     }
 
     this.props.navigator.push({id: 'web', obj: targetRepo});
