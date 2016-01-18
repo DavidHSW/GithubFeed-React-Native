@@ -11,6 +11,7 @@ const FeedComponent = require('./FeedComponent');
 const LoginComponent = require('./LoginComponent');
 const OrgComponent = require('./OrgComponent');
 const PersonalComponent = require('./PersonalComponent');
+const WatchingComponent = require('./WatchingComponent');
 
 const {
   Navigator,
@@ -47,7 +48,7 @@ const NavigationBarRouteMapper = {
         rightButton = (
           <TouchableOpacity onPress={() => navigator.pop()}>
             <Text style={[styles.navBarText, {marginRight: 20}]}>
-              Done
+              Cancel
             </Text>
           </TouchableOpacity>
         )
@@ -85,6 +86,9 @@ const NavigationBarRouteMapper = {
         break;
       case 'me':
         title = 'Me';
+        break;
+      case 'watching':
+        title = 'Watching';
         break;
     }
     return (
@@ -133,13 +137,15 @@ const routes = {
         return (
           <LoginComponent
             navigator={navigator}
-            nextPromise={route.nextPromise}
-            nextPromiseAction={route.nextPromiseAction}/>
+            nextPromise={route.nextPromiseFunc}
+            />
         )
       case 'org':
         return <OrgComponent navigator={navigator} org={route.obj}/>;
       case 'me':
         return <PersonalComponent navigator={navigator}/>;
+      case 'watching':
+        return <WatchingComponent navigator={navigator}/>;
     }
 
     return null;

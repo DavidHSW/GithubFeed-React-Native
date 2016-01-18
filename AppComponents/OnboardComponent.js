@@ -25,28 +25,32 @@ const OnboardComponent = React.createClass({
   getInitialState() {
     return {
       username: '',
-      loginSuc: true,
+      loadingError: null,
       loading: false,
     }
   },
 
   submitOnboard() {
-    const state = this.state;
-    if (state.username.length == 0) return;
+    if (this.state.username.length == 0) return;
 
     this.setState({
+      loadingError: null,
       loading: true,
-      loginSuc: true,
     });
+    GHService.onboard(this.state.username)
+      .then(value => {
+        this.setState({
+          loading: false,
+        })
 
-    GHService.onboard(state.username, (user, needLogin) => {
-      this.setState({
-        loginSuc: user != null,
-        loading: false,
-      });
-
-      this.props.didOnboard && this.props.didOnboard(user, needLogin);
-    });
+        this.props.didOnboard && this.props.didOnboard(value);
+      })
+      .catch(err => {
+        this.setState({
+          loadingError: err,
+          loading: false,
+        });
+      })
   },
 
   onNameChange(text) {
@@ -56,18 +60,18 @@ const OnboardComponent = React.createClass({
   },
 
   shouldComponentUpdate(nextProps, nextState) {
-    const loginSuc = nextState.loginSuc != this.state.loginSuc;
+    const loginErr = nextState.loadingError != this.state.loadingError;
     const loading = nextState.loading != this.state.loading;
 
-    return loginSuc || loading;
+    return loginErr || loading;
   },
 
   render() {
     let failedDesc;
-    if (!this.state.loginSuc) {
+    if (this.state.loadingError) {
       failedDesc = (
         <Text
-          style={{color: Colors.red}}>Oops, onboard failed, check your user name
+          style={{color: Colors.red}}>{this.state.loadingError.message}
         </Text>
       );
     }

@@ -20,7 +20,6 @@ const LoginComponent = React.createClass({
   PropTypes: {
     /* A next action promise */
     nextPromise: React.PropTypes.object,
-    nextPromiseAction: React.PropTypes.object,
     didLogin: React.PropTypes.func,
   },
 
@@ -48,11 +47,7 @@ const LoginComponent = React.createClass({
         this.props.didLogin && this.props.didLogin();
 
         const nextPromise = this.props.nextPromise && this.props.nextPromise();
-        const nextPromiseAction = this.props.nextPromiseAction;
-        if (nextPromise) {
-          nextPromise.then(nextPromiseAction)
-        }
-        console.log('after login');
+        return nextPromise;
       })
       .catch(err => {
         console.log('login error', err);

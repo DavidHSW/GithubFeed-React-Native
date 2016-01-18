@@ -44,7 +44,9 @@ const FeedComponent = React.createClass({
   },
 
   handleError(err) {
-    console.log('FeedComponent handle error: ' + err);
+    if (!err.isReloadError) {
+      FeedsPage --;
+    }
   },
 
   render() {

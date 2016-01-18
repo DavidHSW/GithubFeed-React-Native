@@ -60,11 +60,11 @@ class GithubService extends EventEmitter {
   /*
    * cb(user, needLogin)
   */
-  onboard(username, cb) {
+  onboard(username) {
     const path = API_PATH + '/users/' + username.trim();
     const validPromise = this.fetchPromise(path);
     let needLogin = false;
-    validPromise.then(value => {
+    return validPromise.then(value => {
       const status = value.status;
       const isValid = status < 400;
       const json = JSON.parse(value._bodyInit);
@@ -75,12 +75,13 @@ class GithubService extends EventEmitter {
         GLOBAL_USER.url = json.url;
         Object.assign(GLOBAL_USER, json);
         SingleGHService._setNeedSaveGlobalUser();
+
+        return GLOBAL_USER;
       } else {
         const bodyMessage = json.message;
-        needLogin = bodyMessage.indexOf('exceeded') >= 0;
-      }
 
-      cb && cb(isValid ? GLOBAL_USER : null, needLogin);
+        throw new Error(bodyMessage);
+      }
     });
   }
 
@@ -209,36 +210,16 @@ class GithubService extends EventEmitter {
     )
   }
 
-  checkNeedLoginWithPromise(promiseFunc, action, navigator) {
+  checkNeedLoginWithPromise(promiseFunc, navigator) {
     if (!this.isLogined()) {
-      const promise = promiseFunc();
-      promise
-        .then(value => {
-          console.log('checkNeedLoginWithPromise value is', value);
-          if (!value._bodyInit || value._bodyInit.length == 0) return;
-          const json = JSON.parse(value._bodyInit);
-          const bodyMessage = json.message;
-          if (!bodyMessage) return;
-
-          const loginMessages = [
-            'exceeded',
-            'Bad credentials',
-            'Requires authentication'
-          ];
-          const needLogin = loginMessages.some(item => bodyMessage.indexOf(item) < 0);
-          console.log('needLogin', needLogin, bodyMessage);
-          if (needLogin) {
-            navigator.push({
-              id: 'login',
-              sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-              title: 'Please Login now',
-              nextPromise: promiseFunc,
-              nextPromiseAction: action,
-            });
-          }
-        })
+      navigator.push({
+        id: 'login',
+        sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
+        title: 'Please Login now',
+        nextPromiseFunc: promiseFunc,
+      });
     } else {
-      return promiseFunc().then(action);
+      return promiseFunc();
     }
   }
 
@@ -299,6 +280,10 @@ class GithubService extends EventEmitter {
       method: method,
       headers: this.tokenHeader(),
     })
+  }
+
+  notifications() {
+    const path = API_PATH + '/notifications';
   }
 }
 

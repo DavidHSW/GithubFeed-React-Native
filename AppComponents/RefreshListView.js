@@ -5,6 +5,7 @@ const DXTopMessage = require('../iosComponents/DXTopMessage');
 const Config = require('../config');
 const PropTypes = React.PropTypes;
 const GHService = require('../networkService/GithubServices');
+const ErrorPlaceholder = require('../commonComponents/ErrorPlacehoderComponent');
 
 const {
   ListView,
@@ -17,9 +18,9 @@ const {
 const LISTVIEWREF = 'listview';
 const CONTAINERREF = 'container';
 
-let DataSource = [];
-
 const FloorListView = React.createClass({
+  _dataSource: [],
+
   propTypes: {
     reloadPromise: PropTypes.func,
     handleReloadData: PropTypes.func,
@@ -39,6 +40,7 @@ const FloorListView = React.createClass({
     return {
       dataSource: new ListView.DataSource(dataSourceParam),
       loaded: false,
+      lastError: {isReloadError: false, error: null},
     };
   },
 
@@ -46,7 +48,8 @@ const FloorListView = React.createClass({
     DXTopMessage.showTopMessage(
       this.refs[CONTAINERREF],
       error.toString(),
-      {offset: 64.0}, () => {});
+      {offset: 64.0}, () => {}
+    );
   },
 
   componentDidMount() {
@@ -54,8 +57,10 @@ const FloorListView = React.createClass({
   },
 
   reloadData() {
-    DataSource = [];
-
+    this.setState({
+      lastError: {isReloadError: false, error: null},
+    });
+    _dataSource = [];
     const reloadPromise = this.props.reloadPromise();
     reloadPromise
       .then(value => {
@@ -64,11 +69,12 @@ const FloorListView = React.createClass({
       })
       .catch(err => {
         this.showError(err);
-        this.props.handleError && this.props.handleError(err);
-
-        this.setState({
+        const pError = {
           loaded: true,
-        });
+          lastError: {isReloadError: true, error: err},
+        };
+        this.props.handleError && this.props.handleError(pError);
+        this.setState(pError);
       })
       .done(() => {
         const node = this.refs[LISTVIEWREF];
@@ -90,39 +96,49 @@ const FloorListView = React.createClass({
      })
      .catch(err => {
        this.showError(err);
-       this.props.handleError && this.props.handleError(err);
+       const pError = {
+         loaded: true,
+         lastError: {isReloadError: false, error: err},
+       };
+       this.props.handleError && this.props.handleError(pError);
+       this.setState(pError);
      })
   },
 
   _setNeedsRenderList(rdata) {
-    DataSource.push(...rdata);
+    _dataSource.push(...rdata);
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(DataSource),
+      dataSource: this.state.dataSource.cloneWithRows(_dataSource),
       loaded: true,
     });
   },
 
   componentDidUpdate(prevProps, prevState) {
     let node = this.refs[LISTVIEWREF];
-    if (!node || this.state.didAddRefreshControl) {
-      return;
-    }
-    let refreshConfig = {
+    if (!node) return;
+
+    DXRefreshControl.configureCustom(node, {
       headerViewClass: 'UIRefreshControl',
-    };
-    DXRefreshControl.configureCustom(node, refreshConfig, this.reloadData);
-    this.setState({
-      didAddRefreshControl: true,
-    });
+    }, this.reloadData);
   },
 
   render() {
     if (!this.state.loaded) {
       return CommonComponents.renderLoadingView();
     }
+
+    if (this.state.lastError.isReloadError) {
+      return (
+        <ErrorPlaceholder
+          title={this.state.lastError.error.message}
+          desc={'Oops, tap to reload'}
+          onPress={this.reloadData}/>
+      );
+    }
     return (
       <View style={{flex: 1, backgroundColor: 'white'}} ref={CONTAINERREF}>
         <ListView
+          {...this.props}
           ref={LISTVIEWREF}
           dataSource={this.state.dataSource}
           renderRow={this.props.renderRow}
@@ -145,12 +161,13 @@ const FloorListView = React.createClass({
   },
 
   renderFooter() {
-    if (this.props.needNextPage()) {
+    const lastError = this.state.lastError;
+    if (this.props.needNextPage() && !lastError.error) {
       return (
         <View style={{
             flex: 1,
             alignItems: 'center',
-            height: 40, 
+            height: 40,
             justifyContent: 'center'}} >
           <ActivityIndicatorIOS size='small' />
         </View>

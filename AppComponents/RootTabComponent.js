@@ -40,7 +40,7 @@ const RootTabBar = React.createClass({
               selectedTab: TABBABIDS[1],
             });
           }}>
-          {Routes.navigator('feed')}
+          {Routes.navigator('watching')}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="Trend"
