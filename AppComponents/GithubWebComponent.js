@@ -35,6 +35,7 @@ const hideJS = `
 
 const GithubWebComponent = React.createClass({
   _isRepo: false,
+  _debugTime: 0,
 
   PropTypes: {
     webURL: React.PropTypes.string,
@@ -51,7 +52,8 @@ const GithubWebComponent = React.createClass({
   },
 
   onNavigationStateChange(e) {
-    console.log('web changed', e);
+    console.log(e.url + 'loading takes' + (Date.now() - this._debugTime) / 1000 + 's');
+    this._debugTime = Date.now();
 
     const title = e.title;
     const URLNeedChanged = title.indexOf('Page not found') >= 0 && this._isRepo;
@@ -68,6 +70,8 @@ const GithubWebComponent = React.createClass({
   },
 
   componentWillMount() {
+    this._debugTime = Date.now();
+    
     const originURL = this.props.webURL;
     const isRepo = originURL.indexOf('/blob/master') > 0;
     if (isRepo) {
@@ -87,6 +91,20 @@ const GithubWebComponent = React.createClass({
       topInset = 0;
     }
 
+    let webToolBar;
+    if (this.state.backAble || this.state.forwardAble) {
+      webToolBar = (
+        <WebToolBar
+          goBack={() => this.webView.goBack()}
+          goForward={() => this.webView.goForward()}
+          onRefresh={() => this.webView.reload()}
+          backAble={this.state.backAble}
+          forwardAble={this.state.forwardAble}
+          refreshAble={this.state.refreshAble}
+        />
+      )
+    }
+
     return (
       <View style={{flex: 1}}>
         {repoToolBar}
@@ -100,14 +118,7 @@ const GithubWebComponent = React.createClass({
           contentInset={{top: topInset, left: 0, bottom: 49, right: 0}}
           startInLoadingState={true}>
         </WebView>
-        <WebToolBar
-          goBack={() => this.webView.goBack()}
-          goForward={() => this.webView.goForward()}
-          onRefresh={() => this.webView.reload()}
-          backAble={this.state.backAble}
-          forwardAble={this.state.forwardAble}
-          refreshAble={this.state.refreshAble}
-        />
+        {webToolBar}
       </View>
     )
   },

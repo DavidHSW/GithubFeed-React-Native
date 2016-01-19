@@ -3,6 +3,7 @@ const GHService = require('../networkService/GithubServices');
 const CommonComponents = require('../commonComponents/CommonComponents');
 const { Icon, } = require('react-native-icons');
 const Colors = require('../commonComponents/Colors');
+const SettingComponent = require('./SettingsCell');
 
 const {
   View,
@@ -89,6 +90,9 @@ const PersonComponent = React.createClass({
               color={Colors.textGray}/>
             </View>
         </TouchableHighlight>
+        <SettingComponent
+          onPress={() => this.props.navigator.push({id: 'settings'})}
+          />
         <TouchableOpacity
           style={[styles.logout, {backgroundColor: logoutColor}]}
           onPress={this.pressLogout}>

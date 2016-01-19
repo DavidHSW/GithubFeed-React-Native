@@ -3,6 +3,8 @@ const GHService = require('../networkService/GithubServices');
 const CommonComponents = require('../commonComponents/CommonComponents');
 const { Icon, } = require('react-native-icons');
 const Colors = require('../commonComponents/Colors');
+const SettingComponent = require('./SettingsCell');
+const GFDiskCache = require('../iosComponents/GFDiskCache');
 
 const {
   View,
@@ -14,86 +16,55 @@ const {
   Image,
   TouchableOpacity,
   Navigator,
+  ActionSheetIOS,
 } = React;
 
 const ICON_SIZE = 30;
 
-const SettingsComponent = React.createClass({
-  propTypes: {
-    onPress: React.PropTypes.func,
-    iconName: React.PropTypes.string,
-    iconColor: React.PropTypes.string,
-    settingName: React.PropTypes.string,
+const PersonComponent = React.createClass({
+  getInitialState() {
+    return {
+      cachedSize: null,
+    };
   },
 
-  getDefaultProps() {
-    return {
-      iconName: 'ion|ios-cog',
-      iconColor: Colors.blue,
-      settingName: 'Settings',
-    }
+  componentWillMount() {
+    GFDiskCache.getDiskCacheCost((size) => {
+      this.setState({
+        cachedSize: size,
+      });
+    });
   },
 
   render() {
+    let cachedSize = this.state.cachedSize ? this.state.cachedSize : '...';
+    cachedSize = 'Clear cache, current is: ' + cachedSize;
     return (
-      <TouchableHighlight
-        underlayColor={'lightGray'}
-        style={styles.userTouch}
-        onPress={this.props.onPress}>
-        <View style={styles.user}>
-          <Icon
-            name={this.props.iconName}
-            size={ICON_SIZE}
-            style={styles.arrow}
-            color={this.props.iconColor}/>
-          <View style={styles.nameInfo}>
-            <Text style={styles.name}>
-              {this.props.settingName}
-            </Text>
-          </View>
-          <Icon
-            name='ion|ios-arrow-right'
-            size={ICON_SIZE}
-            style={styles.arrow}
-            color={Colors.textGray}/>
-        </View>
-      </TouchableHighlight>
+      <ScrollView
+        style={styles.container}
+        automaticallyAdjustContentInsets={false}
+        contentInset={{top: 64, left: 0, bottom: 49, right: 0}}
+        contentOffset={{x:0, y:-64}}
+        >
+        <SettingComponent
+          iconName={'ion|ios-trash'}
+          iconColor={'orange'}
+          settingName={cachedSize}
+          onPress={() => {GFDiskCache.clearDiskCache((size) => {
+            this.setState({
+              cachedSize: size,
+            });
+          })}}/>
+      </ScrollView>
     );
   }
 });
 
 var styles = StyleSheet.create({
-  userTouch: {
-    marginTop: 20,
-  },
-  user: {
-    padding: 8,
-    paddingLeft: 10,
-    paddingRight: 10,
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#EDECF1',
-  },
-  nameInfo: {
-    flexDirection: 'column',
-    marginLeft: 8,
-    justifyContent: 'center',
+  container: {
+    backgroundColor: '#F0EFF5',
     flex: 1,
-  },
-  name: {
-    color: 'black',
-    fontSize: 17,
-  },
-  arrow: {
-    width: ICON_SIZE,
-    height: ICON_SIZE,
-  },
-  settings: {
-    height: 44,
   },
 });
 
-module.exports = SettingsComponent;
+module.exports = PersonComponent;

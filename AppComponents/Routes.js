@@ -12,6 +12,7 @@ const LoginComponent = require('./LoginComponent');
 const OrgComponent = require('./OrgComponent');
 const PersonalComponent = require('./PersonalComponent');
 const WatchingComponent = require('./WatchingComponent');
+const SettingsComponent = require('./SettingsComponent');
 
 const {
   Navigator,
@@ -90,6 +91,9 @@ const NavigationBarRouteMapper = {
       case 'watching':
         title = 'Watching';
         break;
+      case 'settings':
+        title = "Settings";
+        break;
     }
     return (
       <Text style={[styles.navBarText,
@@ -146,6 +150,8 @@ const routes = {
         return <PersonalComponent navigator={navigator}/>;
       case 'watching':
         return <WatchingComponent navigator={navigator}/>;
+      case 'settings':
+        return <SettingsComponent navigator={navigator}/>;
     }
 
     return null;

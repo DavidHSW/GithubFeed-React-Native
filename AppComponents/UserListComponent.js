@@ -15,18 +15,16 @@ const UserListComponent = React.createClass({
   handleReloadData(response) {
     const body = response._bodyInit;
     const jsonResult = JSON.parse(body);
-    console.log('log user is: ', response);
 
-    // TODO: 对正则还不是很熟，用这种比较挫的方式
     if (this._endPage == -1) {
       const links = response.headers.map.link && response.headers.map.link[0];
       if (links) {
-        const re = links.split('page=')[2];
-        if (re.indexOf('last') >= 0) {
-          const en = re.split('>;')[0];
-
-          console.log('links is', links, re, en);
-          this._endPage = en;
+        const reg = /page=(\d+)\S+\s+rel="last"/g;
+        const matchs = reg.exec(links);
+        const end = matchs[1];
+        if (end) {
+          console.log('end page is', end);
+          this._endPage = end;
         }
       } else {
         this._endPage = USER_PAGE;
