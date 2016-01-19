@@ -24,8 +24,7 @@
   settings.extensions = @"js,css,md";
   settings.whitelist = @[@"github.com"];
   settings.blacklist = @[@"www.google-analytics.com"];
-//  settings.cacheMaxAge = 24 * 60 * 60 * 3;
-  settings.cacheMaxAge = 60 * 60 * 1;
+  settings.cacheMaxAge = 24 * 60 * 60 * 3;
 
   return settings;
 }

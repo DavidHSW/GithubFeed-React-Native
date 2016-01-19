@@ -71,7 +71,7 @@ const GithubWebComponent = React.createClass({
 
   componentWillMount() {
     this._debugTime = Date.now();
-    
+
     const originURL = this.props.webURL;
     const isRepo = originURL.indexOf('/blob/master') > 0;
     if (isRepo) {
@@ -155,14 +155,20 @@ const RepoToolBar = React.createClass({
         });
         this._repoRes = res;
 
-        const pms = [
-          GHService.repoWatchQuery(this._repoRes.full_name),
-          GHService.repoStarQuery(this._repoRes.full_name)
-        ];
+        if (GHService.isLogined()) {
+          const pms = [
+            GHService.repoWatchQuery(this._repoRes.full_name),
+            GHService.repoStarQuery(this._repoRes.full_name)
+          ];
 
-        return Promise.all(pms);
+          return Promise.all(pms);
+        } else {
+          return null;
+        }
       })
       .then(value => {
+        if (!value) return;
+
         console.log('pm all', value);
         let watchStatus;
         let starStatus;
@@ -178,7 +184,10 @@ const RepoToolBar = React.createClass({
           watchStatus: watchStatus,
           starStatus: starStatus,
         });
-      });
+      })
+      .catch(err => {
+        console.log('WebCompononent Error', err);
+      })
   },
 
   onPressWatch() {
@@ -239,15 +248,7 @@ const RepoToolBar = React.createClass({
   onPressStarers() {
     const user = {
       url: this._repoRes.stargazers_url,
-      title: 'Forkers',
-    }
-    this.props.navigator.push({id: 'userList', obj: user});
-  },
-
-  onPressForkers() {
-    const user = {
-      url: this._repoRes.forks_url,
-      title: 'Starers',
+      title: 'Stargazers',
     }
     this.props.navigator.push({id: 'userList', obj: user});
   },
@@ -261,9 +262,9 @@ const RepoToolBar = React.createClass({
         <TouchableOpacity onPress={() => {
           this.props.navigator.push({id: 'user', obj: owner});
         }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={styles.repoUser}>
             <Image
-               style={{width: 35, height: 35, backgroundColor: 'lightGray'}}
+               style={styles.repoAvatar}
                source={{uri: owner.avatar_url}}/>
              <Text style={[styles.actionText, {marginRight: 20}]}>{owner.login}</Text>
           </View>
@@ -414,14 +415,35 @@ var styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#F2F2F2',
+    shadowColor: '#ccc',
+    shadowOffset: {width: 2, height: 2},
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
   },
   action: {
     borderStyle: 'solid',
     borderColor: '#F2F2F2',
-    borderRadius: 2,
-    borderWidth: 0.5,
+    borderRadius: 3,
     flexDirection: 'row',
     marginRight: 20,
+    shadowColor: '#ccc',
+    shadowOffset: {width: 2, height: 2},
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    backgroundColor: "#F2F2F2",
+  },
+  repoUser: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  repoAvatar: {
+    width: 30,
+    height: 30,
+    backgroundColor:'lightGray',
+    borderRadius: 2,
   },
   leftAction: {
     padding: 3,

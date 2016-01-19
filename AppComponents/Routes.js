@@ -13,6 +13,7 @@ const OrgComponent = require('./OrgComponent');
 const PersonalComponent = require('./PersonalComponent');
 const WatchingComponent = require('./WatchingComponent');
 const SettingsComponent = require('./SettingsComponent');
+const RepoListComponent = require('./RepoListComponent');
 
 const {
   Navigator,
@@ -94,6 +95,9 @@ const NavigationBarRouteMapper = {
       case 'settings':
         title = "Settings";
         break;
+      case 'repos':
+        title = route.obj.title;
+        break;
     }
     return (
       <Text style={[styles.navBarText,
@@ -152,6 +156,8 @@ const routes = {
         return <WatchingComponent navigator={navigator}/>;
       case 'settings':
         return <SettingsComponent navigator={navigator}/>;
+      case 'repos':
+        return <RepoListComponent navigator={navigator} repoListURL={route.obj.url}/>;
     }
 
     return null;

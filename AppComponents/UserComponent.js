@@ -38,14 +38,6 @@ const UserComponent = React.createClass({
     };
   },
 
-  onOpenRepos() {
-    if (!this.state.dataSource.getRowCount > 0) {
-      return;
-    }
-
-    this.scv && this.scv.scrollResponderScrollTo(0, this._headerHeight);
-  },
-
   onHeaderLayout(e) {
     this._headerHeight = e.nativeEvent.layout.height;
   },
@@ -66,7 +58,6 @@ const UserComponent = React.createClass({
     return (
       <AboutComponent
         user={this.props.user}
-        onOpenRepos={this.onOpenRepos}
         onLayout={this.onHeaderLayout}
         navigator={this.props.navigator}
         onLoadUser={this.onLoadDetailUser}
@@ -97,14 +88,13 @@ const UserComponent = React.createClass({
 
 const AboutComponent = React.createClass({
   PropTypes: {
-    onOpenRepos: React.PropTypes.func,
     /*
      * Just the simplest user
      * {id: 3621906, login: "dongxicheng",
-        gravatar_id: "",
-        url: "https://api.github.com/users/dongxicheng",
-        avatar_url: "https://avatars.githubusercontent.com/u/3621906?"
-        }
+     *   gravatar_id: "",
+     *   url: "https://api.github.com/users/dongxicheng",
+     *   avatar_url: "https://avatars.githubusercontent.com/u/3621906?"
+     * }
      */
     user: React.PropTypes.object,
     onLoadUser: React.PropTypes.func,
@@ -168,8 +158,17 @@ const AboutComponent = React.createClass({
     this.props.navigator.push({id: 'userList', obj: user});
   },
 
-  onOpenRepos() {
-    this.props.onOpenRepos && this.props.onOpenRepos();
+  onOpenStarredRepos() {
+    const username = this.state.user.login;
+    /**
+     * This is a a little special for starred repo API
+     */
+    const url = 'https://api.github.com' + '/users/' + username + '/starred';
+    const repo = {
+      url: url,
+      title: username + "'s Starred",
+    }
+    this.props.navigator.push({id: 'repos', obj: repo});
   },
 
   renderOrg(org) {
@@ -208,15 +207,25 @@ const AboutComponent = React.createClass({
       })
       .catch(err => {console.log('About promise err', err);});
 
-    GHService.userFollowQuery(user.login)
+    GHService.starredReposCount(user.login)
       .then(value => {
-        const status = value.status;
-        const isFollowing = status < 400;
-        this.state.user.isFollowing = isFollowing;
+        this.state.user.starredCount = value;
         this.setState({
           user: this.state.user,
         });
-      });
+      })
+
+    if (GHService.isLogined()) {
+      GHService.userFollowQuery(user.login)
+        .then(value => {
+          const status = value.status;
+          const isFollowing = status < 400;
+          this.state.user.isFollowing = isFollowing;
+          this.setState({
+            user: this.state.user,
+          });
+        });
+    }
   },
 
   followButton() {
@@ -374,13 +383,13 @@ const AboutComponent = React.createClass({
                 </Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.onOpenRepos}>
+            <TouchableOpacity onPress={this.onOpenStarredRepos}>
               <View style={styles.statusInfoTouch}>
                 <Text style={styles.statusInfoTouchNum}>
-                  {user.public_repos}
+                  {user.starredCount}
                 </Text>
                 <Text style={styles.statusInfoTouchDes}>
-                  Repos
+                  Starred
                 </Text>
               </View>
             </TouchableOpacity>

@@ -285,6 +285,42 @@ class GithubService extends EventEmitter {
   notifications() {
     const path = API_PATH + '/notifications';
   }
+
+  starredRepos(username) {
+    if (username.length == 0) {
+      console.log('Error for username', username);
+      return;
+    }
+    const path = API_PATH + '/' + username + '/starred';
+    return fetch(path, {
+      headers: this.tokenHeader(),
+    })
+  }
+
+  starredReposCount(username) {
+    const path = API_PATH + '/users/' + username + '/starred?per_page=1';
+    return fetch(path, {
+      headers: this.tokenHeader(),
+    })
+      .then(value => {
+        const status = value.status;
+        let count = '...';
+        if (status < 400) {
+          const links = value.headers.map.link && value.headers.map.link[0];
+          if (links) {
+            const reg = /&page=(\d+)\S+\s+rel="last"/g;
+            const matchs = reg.exec(links);
+            const end = matchs[1];
+            if (end) {
+              console.log('end page is', end);
+              count = end;
+            }
+          }
+        }
+
+        return count;
+      })
+  }
 }
 
 const SingleGHService = new GithubService();
