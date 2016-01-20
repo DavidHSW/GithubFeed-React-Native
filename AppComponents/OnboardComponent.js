@@ -87,6 +87,8 @@ const OnboardComponent = React.createClass({
           source={require('../AppIcons/ios/iTunesArtwork.png')}/>
         <View style={styles.loginContainer}>
           <TextInput
+            autoCapitalize={'none'}
+            autoCorrect={false}
             style={styles.textInput}
             returnKeyType={'done'}
             onChangeText={this.onNameChange}

@@ -20,7 +20,11 @@ const {
 
 const ICON_SIZE = 30;
 
-const PersonComponent = React.createClass({
+const SearchComponent = React.createClass({
+  onChangeText(text) {
+    console.log('SearchComponent onChangeText', text);
+  },
+
   pressLogin() {
     const isLogined = GHService.isLogined();
     if (isLogined) return;
@@ -30,6 +34,18 @@ const PersonComponent = React.createClass({
       sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
       title: 'Please Login now',
     });
+  },
+
+  componentWillMount() {
+    const route = this.props.route;
+    route.sp = this;
+    console.log('search will mount', this.props);
+  },
+
+  componentWillUnmount() {
+    const route = this.props.route;
+    route.sp = null;
+    console.log('search will unmount', this.props);
   },
 
   pressLogout() {
@@ -163,4 +179,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = PersonComponent;
+module.exports = SearchComponent;

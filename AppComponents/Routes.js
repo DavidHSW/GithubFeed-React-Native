@@ -3,6 +3,8 @@ const { Icon } = require('react-native-icons');
 const cssVar = require('cssVar');
 const Colors = require('../commonComponents/Colors');
 const GHService = require('../networkService/GithubServices');
+const Dimensions = require('Dimensions');
+const ScreenWidth = Dimensions.get('window').width;
 
 const {UserComponent} = require('./UserComponent');
 const GHWebComponent = require('./GithubWebComponent');
@@ -14,6 +16,8 @@ const PersonalComponent = require('./PersonalComponent');
 const WatchingComponent = require('./WatchingComponent');
 const SettingsComponent = require('./SettingsComponent');
 const RepoListComponent = require('./RepoListComponent');
+const ExploreComponent = require('./ExploreComponent');
+const SearchComponent = require('./SearchComponent');
 
 const {
   Navigator,
@@ -21,6 +25,8 @@ const {
 	StyleSheet,
 	PixelRatio,
 	Text,
+  TextInput,
+  View,
 } = React;
 
 const NavigationBarRouteMapper = {
@@ -98,15 +104,59 @@ const NavigationBarRouteMapper = {
       case 'repos':
         title = route.obj.title;
         break;
+      case 'explore':
+        title = 'explore';
+        break;
+      case 'search':
+        title = 'search';
+        break;
     }
-    return (
-      <Text style={[styles.navBarText,
-                    styles.navBarTitleText,
-                    {width: 200, height: 40, textAlign: 'center'}]}
-            numberOfLines={1}>
-        {title}
-      </Text>
-    );
+    const searchPlaceholder = 'Search users, repos';
+    if (title == 'explore') {
+      return (
+        <TouchableOpacity
+          style={[styles.searchBar, {justifyContent: 'center'}]}
+          onPress={() => {navigator.push({id: 'search'})}}
+          >
+          <Icon
+            name={'ion|ios-search'}
+            size={20}
+            style={styles.searchIcon}
+            color={Colors.black}
+          />
+          <Text style={[styles.textInput, {alignSelf: 'center', flex: 0}]}>
+            {searchPlaceholder}
+          </Text>
+        </TouchableOpacity>
+      )
+    } else if (title == 'search') {
+      console.log('render title route', route);
+      return (
+        <View style={[styles.searchBar, {width: ScreenWidth - 50}]}>
+          <Icon
+            name={'ion|ios-search'}
+            size={20}
+            style={styles.searchIcon}
+            color={Colors.black}
+          />
+          <TextInput
+            style={[styles.textInput]}
+            placeholder={searchPlaceholder}
+            autoFocus={true}
+            onChangeText={route.sp.onChangeText}
+            />
+        </View>
+      )
+    } else {
+      return (
+        <Text style={[styles.navBarText,
+                      styles.navBarTitleText,
+                      {width: 200, height: 40, textAlign: 'center'}]}
+              numberOfLines={1}>
+          {title}
+        </Text>
+      );
+    }
   },
 };
 
@@ -158,6 +208,23 @@ const routes = {
         return <SettingsComponent navigator={navigator}/>;
       case 'repos':
         return <RepoListComponent navigator={navigator} repoListURL={route.obj.url}/>;
+      case 'explore':
+        return <ExploreComponent navigator={navigator}/>;
+      case 'search':
+        console.log('renderScene route', route);
+        /**
+         * Here's a little tricky for pass the textInput's onChangeText callback
+         *
+         * I do it by several steps:
+         * 1. pass the route to SearchComponent's props
+         * 2. in SearchComponent's componentWillMount pass it to route
+         * 3. in Navigator's renderTitle, use SearchComponent's onChangeText for
+         * 		callback
+         *
+         * Maybe some RN version will change Navigator's renderScene and renderTitle
+         * So need some better approach.
+         */
+        return <SearchComponent navigator={navigator} route={route}/>;
     }
 
     return null;
@@ -209,6 +276,30 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     backgroundColor: '#EAEAEA',
+  },
+  searchBar: {
+    padding: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: ScreenWidth - 10,
+    height: 35,
+    // borderWidth: 1,
+    // borderColor: Colors.borderColor,
+    borderRadius: 4,
+    margin: 5,
+    backgroundColor: Colors.backGray,
+  },
+  searchIcon: {
+    marginLeft: 3,
+    marginRight: 3,
+    width: 20,
+    height: 20
+  },
+  textInput: {
+    fontSize: 15,
+    alignSelf: 'stretch',
+    flex: 1,
+    color: Colors.black,
   },
 });
 

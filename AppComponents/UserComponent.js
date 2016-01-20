@@ -57,6 +57,7 @@ const UserComponent = React.createClass({
   renderHeader() {
     return (
       <AboutComponent
+        key={this.props.user.login}
         user={this.props.user}
         onLayout={this.onHeaderLayout}
         navigator={this.props.navigator}
@@ -182,7 +183,7 @@ const AboutComponent = React.createClass({
     )
   },
 
-  componentWillMount() {
+  componentDidMount() {
     const user = this.props.user;
     GHService.fetchPromise(user.url)
       .then(res => {

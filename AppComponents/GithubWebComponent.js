@@ -74,9 +74,6 @@ const GithubWebComponent = React.createClass({
 
     const originURL = this.props.webURL;
     const isRepo = originURL.indexOf('/blob/master') > 0;
-    if (isRepo) {
-
-    }
     this._isRepo = isRepo;
   },
 
@@ -125,7 +122,11 @@ const GithubWebComponent = React.createClass({
 });
 
 const RepoToolBar = React.createClass({
-  _repoRes: null,
+  _repoRes: {
+    full_name: null,
+    subscribers_url: null,
+    stargazers_url: null,
+  },
 
   PropTypes: {
     URL: React.PropTypes.string,
@@ -141,7 +142,7 @@ const RepoToolBar = React.createClass({
     }
   },
 
-  componentWillMount() {
+  componentDidMount() {
     GHService.fetchPromise(this.props.URL)
       .then(value => {
         console.log('value', value);
@@ -191,10 +192,13 @@ const RepoToolBar = React.createClass({
   },
 
   onPressWatch() {
+    const fullName = this._repoRes.full_name;
+    if (!fullName) return;
+
     const isWatch = this.state.watchStatus == 'Unwatch';
     const toggleAction = isWatch ? 'DELETE' : 'PUT';
     const watchQuery = (() => {
-      GHService.repoWatchQuery(this._repoRes.full_name, toggleAction)
+      GHService.repoWatchQuery(fullName, toggleAction)
         .then(value => {
           console.log('watch response', value);
           const status = value.status;
@@ -215,18 +219,24 @@ const RepoToolBar = React.createClass({
   },
 
   onPressWatchers() {
+    const url = this._repoRes.subscribers_url;
+    if (!url) return;
+
     const user = {
-      url: this._repoRes.subscribers_url,
+      url: url,
       title: 'Watchers',
     }
     this.props.navigator.push({id: 'userList', obj: user});
   },
 
   onPressStar() {
+    const fullName = this._repoRes.full_name;
+    if (!fullName) return;
+
     const isStar = this.state.starStatus == 'Unstar';
     const toggleAction = isStar ? 'DELETE' : 'PUT';
     const starQuery = () => {
-      GHService.repoStarQuery(this._repoRes.full_name, toggleAction)
+      GHService.repoStarQuery(fullName, toggleAction)
         .then(value => {
           const status = value.status;
           const isNowStar = this.state.starStatus == 'Unstar';
@@ -246,8 +256,11 @@ const RepoToolBar = React.createClass({
   },
 
   onPressStarers() {
+    const url = this._repoRes.stargazers_url;
+    if (!url) return;
+
     const user = {
-      url: this._repoRes.stargazers_url,
+      url: url,
       title: 'Stargazers',
     }
     this.props.navigator.push({id: 'userList', obj: user});

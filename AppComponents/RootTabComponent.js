@@ -31,8 +31,8 @@ const RootTabBar = React.createClass({
           {Routes.navigator('feed')}
         </TabBarIOS.Item>
         <TabBarIOS.Item
-          title="Watching"
-          iconName={'ion|ios-eye-outline'}
+          title="Explore"
+          iconName={'ion|ios-search-strong'}
           selectedIconName={'ion|ios-eye'}
           selected={this.state.selectedTab === TABBABIDS[1]}
           onPress={() => {
@@ -40,7 +40,7 @@ const RootTabBar = React.createClass({
               selectedTab: TABBABIDS[1],
             });
           }}>
-          {Routes.navigator('watching')}
+          {Routes.navigator('explore')}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="Trend"
