@@ -54,6 +54,9 @@ const GHCell = React.createClass({
               style={styles.cellLeftRepoIcon}
               color='gray'/>
           </View>
+          <Text style={styles.language}>
+            {repo.language}
+          </Text>
         </View>
       </TouchableHighlight>
     )
@@ -95,6 +98,7 @@ const styles = StyleSheet.create({
   },
   cellRight: {
     flexDirection: 'row',
+    marginTop: 10,
   },
   cellRightText: {
     color: Colors.textGray,
@@ -168,6 +172,15 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#BFBFBF',
   },
+
+  language: {
+    position: 'absolute',
+    top: 3,
+    right: 3,
+    color: '#888',
+    fontSize: 12,
+    fontWeight: 'bold',
+  }
 });
 
 module.exports = GHCell

@@ -20,36 +20,26 @@ const CONTAINERREF = 'container';
 
 const FloorListView = React.createClass({
   _dataSource: [],
+  _page: 1,
+  _maxPage: -1,
 
   propTypes: {
     /**
      * return a reloadPromise
      */
-    reloadPromise: PropTypes.func,
+    enablePullToRefresh: PropTypes.bool,
+    /**
+     * return a reloadPromise
+     */
+    reloadPromisePath: PropTypes.func,
     /**
      * return an array of handled data, (value) => {}
      */
     handleReloadData: PropTypes.func,
     /**
-     * return an append promise
-     */
-    appendPromise: PropTypes.func,
-    /**
-     * return an array of handled data, (value) => {}
-     */
-    handleAppendData: PropTypes.func,
-    /**
-     * return if need to load needPage
-     */
-    needNextPage: PropTypes.func,
-    /**
      * render the row, like ListView
      */
     renderRow: PropTypes.func,
-    /**
-     * handle the load error ({isReloadError: false, error: null}) => {}
-     */
-    handleError: PropTypes.func,
   },
 
   getInitialState() {
@@ -60,13 +50,9 @@ const FloorListView = React.createClass({
 
     return {
       dataSource: new ListView.DataSource(dataSourceParam),
-      loaded: false,
+      loaded: true,
       lastError: {isReloadError: false, error: null},
     };
-  },
-
-  _isPromise(pPromise)  {
-    return !!pPromise.then && typeof pPromise.then === 'function';
   },
 
   showError(error) {
@@ -93,15 +79,33 @@ const FloorListView = React.createClass({
   },
 
   reloadData() {
+    let path = this.props.reloadPromisePath();
+    if (!path) return;
+
     this.setState({
       lastError: {isReloadError: false, error: null},
+      loaded: false,
     });
-    _dataSource = [];
-    const reloadPromise = this.props.reloadPromise();
-    if (!this._isPromise(reloadPromise)) return;
+    this._dataSource = [];
+    this._page = 1;
 
+    path += '&page=' + this._page;
+    const reloadPromise = GHService.fetchPromise(path);
     reloadPromise
       .then(value => {
+        // look for the last page
+        if (this._maxPage == -1) {
+          const links = value.headers.map.link && value.headers.map.link[0];
+          if (links) {
+            const reg = /page=(\d+)\S+\s+rel="last"/g;
+            const matchs = reg.exec(links);
+            const end = matchs[1];
+            if (end) {
+              this._maxPage = end;
+            }
+          }
+        }
+
         const rdata = this.props.handleReloadData(value);
         this._setNeedsRenderList(rdata);
       })
@@ -116,46 +120,52 @@ const FloorListView = React.createClass({
       })
       .done(() => {
         const node = this.refs[LISTVIEWREF];
-        if (node) {
+        if (node && this.props.enablePullToRefresh) {
           DXRefreshControl.endRefreshing(node);
         }
       })
   },
 
   appendPage() {
-    if (!this.props.needNextPage()) return;
+    if (this._page > this._maxPage) return;
 
-    console.log('append Page');
-    const appendPromise = this.props.appendPromise();
-    if (!this._isPromise(appendPromise)) return;
+    this._page ++;
 
+    let path = this.props.reloadPromisePath();
+    if (!path) return;
+
+    path += '&page=' + this._page;
+    const appendPromise = GHService.fetchPromise(path);
     appendPromise
      .then(value => {
-       const rdata = this.props.handleAppendData(value);
+       const rdata = this.props.handleReloadData(value);
        this._setNeedsRenderList(rdata);
      })
      .catch(err => {
        this.showError(err);
+
        const pError = {
          loaded: true,
          lastError: {isReloadError: false, error: err},
        };
-       this.props.handleError && this.props.handleError(pError);
        this.setState(pError);
+       this._page --;
+
+       this.props.handleError && this.props.handleError(pError);
      })
   },
 
   _setNeedsRenderList(rdata) {
-    _dataSource.push(...rdata);
+    this._dataSource.push(...rdata);
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(_dataSource),
+      dataSource: this.state.dataSource.cloneWithRows(this._dataSource),
       loaded: true,
     });
   },
 
   componentDidUpdate(prevProps, prevState) {
     let node = this.refs[LISTVIEWREF];
-    if (!node) return;
+    if (!node || !this.props.enablePullToRefresh) return;
 
     DXRefreshControl.configureCustom(node, {
       headerViewClass: 'UIRefreshControl',
@@ -185,31 +195,26 @@ const FloorListView = React.createClass({
           renderFooter={this.renderFooter}
           onEndReached={this.appendPage}
           automaticallyAdjustContentInsets={false}
-          contentInset={{top: 64, left: 0, bottom: 49, right: 0}}
-          contentOffset={{x:0, y:-64}}
+          contentInset={{top: 0, left: 0, bottom: 49, right: 0}}
+          contentOffset={{x:0, y: 0}}
           scrollRenderAheadDistance={50}
           {...this.props}
         />
       </View>
     );
-
-
-    /* 在RN 15里面需要这样
-    contentInset={{top: 64, left: 0 , bottom: 49, right: 0}}
-    contentOffset={{x:0, y:-64}}
-    */
   },
 
   renderFooter() {
     const lastError = this.state.lastError;
-    if (this.props.needNextPage() && !lastError.error) {
+    if (this._maxPage > this._page && !lastError.error) {
       return (
-        <View style={{
+        <View
+          style={{
             flex: 1,
             alignItems: 'center',
             height: 40,
-            justifyContent: 'center'}} >
-          <ActivityIndicatorIOS size='small' />
+            justifyContent: 'center'}}>
+          <ActivityIndicatorIOS size='small'/>
         </View>
       )
     }

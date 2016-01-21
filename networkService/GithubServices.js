@@ -37,6 +37,10 @@ class GithubService extends EventEmitter {
     super();
   }
 
+  apiPath() {
+    return API_PATH;
+  }
+
   queryLoginState() {
     return (
       AsyncStorage.getItem(GH_USER_KEY)

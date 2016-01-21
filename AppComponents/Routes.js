@@ -130,7 +130,6 @@ const NavigationBarRouteMapper = {
         </TouchableOpacity>
       )
     } else if (title == 'search') {
-      console.log('render title route', route);
       return (
         <View style={[styles.searchBar, {width: ScreenWidth - 50}]}>
           <Icon
@@ -144,6 +143,8 @@ const NavigationBarRouteMapper = {
             placeholder={searchPlaceholder}
             autoFocus={true}
             onChangeText={route.sp.onChangeText}
+            onSubmitEditing={route.sp.onSubmitEditing}
+            clearButtonMode={'while-editing'}
             />
         </View>
       )
@@ -211,7 +212,6 @@ const routes = {
       case 'explore':
         return <ExploreComponent navigator={navigator}/>;
       case 'search':
-        console.log('renderScene route', route);
         /**
          * Here's a little tricky for pass the textInput's onChangeText callback
          *

@@ -4,6 +4,11 @@ const CommonComponents = require('../commonComponents/CommonComponents');
 const { Icon, } = require('react-native-icons');
 const Colors = require('../commonComponents/Colors');
 const SettingComponent = require('./SettingsCell');
+const ScrollableTabView = require('react-native-scrollable-tab-view');
+const DefaultTabBar = require('./DefaultTabBar');
+const GHRefreshListView = require('./GHRefreshListView');
+const RepoCell = require('./RepoCell');
+const UserCell = require('./UserCell');
 
 const {
   View,
@@ -16,167 +21,154 @@ const {
   TouchableOpacity,
   Navigator,
   ActionSheetIOS,
+  ListView,
 } = React;
 
 const ICON_SIZE = 30;
 
 const SearchComponent = React.createClass({
-  onChangeText(text) {
-    console.log('SearchComponent onChangeText', text);
+  _selectTab: 0,
+  _text: '',
+  _lvs: [],
+
+  _resetLoadedStatus() {
+    this._lvs.forEach((lv) => {
+      lv.clearData();
+    })
   },
 
-  pressLogin() {
-    const isLogined = GHService.isLogined();
-    if (isLogined) return;
+  onChangeText(text) {
+    this._resetLoadedStatus();
+    this._text = text;
+  },
 
-    this.props.navigator.push({
-      id: 'login',
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-      title: 'Please Login now',
-    });
+  onSubmitEditing() {
+    if (this._text.length == 0) return;
+
+    this._lvs[this._selectTab].reloadData();
+  },
+
+  onChangeTab(tab) {
+    this._selectTab = tab.i;
+    const refreshListView = this._lvs[tab.i];
+    refreshListView && refreshListView.reloadDataIfNeed();
   },
 
   componentWillMount() {
     const route = this.props.route;
     route.sp = this;
-    console.log('search will mount', this.props);
   },
 
   componentWillUnmount() {
     const route = this.props.route;
     route.sp = null;
-    console.log('search will unmount', this.props);
   },
 
-  pressLogout() {
-    ActionSheetIOS.showActionSheetWithOptions({
-      title: 'Are you sure to leave?',
-      options:['logout', 'cancel'],
-      cancelButtonIndex: 1,
-      destructiveButtonIndex: 0,
-    },
-    (buttonIndex) => {
-      if (buttonIndex == 0) {
-        GHService.logout();
-      }
-    });
+  reloadReopPath() {
+    if (this._text.length == 0) return;
+
+    let apiPath = GHService.apiPath();
+    apiPath += '/search/repositories?' + 'q=' + this._text;
+
+    return apiPath;
+  },
+
+  reloadUserPath() {
+    if (this._text.length == 0) return;
+
+    let apiPath = GHService.apiPath();
+    apiPath += '/search/users?' + 'q=' + this._text;
+
+    return apiPath;
+  },
+
+  reloadOrgPath() {
+    if (this._text.length == 0) return;
+
+    let apiPath = GHService.apiPath();
+    apiPath += '/search/users?' + 'q=' + this._text + '+type:org';
+
+    return apiPath;
+  },
+
+  handleReloadData(value) {
+    const json = value._bodyInit.length > 0 && JSON.parse(value._bodyInit);
+    return json.items;
+  },
+
+  renderRepoRow(rowData, sectionID, rowID, highlightRow) {
+    return <RepoCell repo={rowData} navigator={this.props.navigator}/>;
+  },
+
+  renderUserRow(rowData, sectionID, rowID, highlightRow) {
+    return <UserCell key={rowID} user={rowData} navigator={this.props.navigator}/>;
+  },
+
+  renderOrgRow(rowData, sectionID, rowID, highlightRow) {
+    return <UserCell key={rowID} user={rowData} navigator={this.props.navigator}/>;
   },
 
   render() {
-    const user = GHService.currentUser();
-    const isLogined = GHService.isLogined();
-    const stateText = isLogined ? 'Logined' : 'Better Press to Login';
-    const stateColor = isLogined ? Colors.green : 'orange';
-    const logoutColor = isLogined ? Colors.red : 'orange';
-    const avatarURL = user.avatar || 'a';
     return (
-      <ScrollView
-        style={styles.container}
-        automaticallyAdjustContentInsets={false}
-        contentInset={{top: 64, left: 0, bottom: 49, right: 0}}
-        contentOffset={{x:0, y:-64}}
-        >
-        <TouchableHighlight
-          underlayColor={'lightGray'}
-          style={styles.userTouch}
-          onPress={() => this.props.navigator.push({id: 'user', obj: user})}>
-          <View style={styles.user}>
-            <Image
-              source={{uri: avatarURL}}
-              style={styles.avatar}
-              onLoadEnd={this.avatarLoadEnd}/>
-            <View style={styles.nameInfo}>
-              <Text style={styles.name}>
-                {user.login}
-              </Text>
-            </View>
-            <Text
-              style={[styles.loginState, {color: stateColor}]}
-              onPress={this.pressLogin}>
-              {stateText}
-            </Text>
-            <Icon
-              name='ion|ios-arrow-right'
-              size={ICON_SIZE}
-              style={styles.arrow}
-              color={Colors.textGray}/>
-            </View>
-        </TouchableHighlight>
-        <SettingComponent
-          onPress={() => this.props.navigator.push({id: 'settings'})}
-          />
-        <TouchableOpacity
-          style={[styles.logout, {backgroundColor: logoutColor}]}
-          onPress={this.pressLogout}>
-          <Text style={styles.logoutText}>
-            Logout
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
-    );
+      <View style={styles.container}>
+        <ScrollableTabView
+          renderTabBar={() => <DefaultTabBar/>}
+          onChangeTab={this.onChangeTab}>
+          <GHRefreshListView
+            enablePullToRefresh={false}
+            ref={(cp) => this._lvs[0] = cp}
+            tabLabel="Repos"
+            renderRow={this.renderRepoRow}
+            reloadPromisePath={this.reloadReopPath}
+            handleReloadData={this.handleReloadData}
+            >
+          </GHRefreshListView>
+          <GHRefreshListView
+            enablePullToRefresh={false}
+            ref={(cp) => this._lvs[1] = cp}
+            tabLabel="Users"
+            renderRow={this.renderUserRow}
+            reloadPromisePath={this.reloadUserPath}
+            handleReloadData={this.handleReloadData}
+            >
+          </GHRefreshListView>
+          <GHRefreshListView
+            enablePullToRefresh={false}
+            ref={(cp) => this._lvs[2] = cp}
+            tabLabel="Orgs"
+            renderRow={this.renderUserRow}
+            reloadPromisePath={this.reloadOrgPath}
+            handleReloadData={this.handleReloadData}
+            >
+          </GHRefreshListView>
+        </ScrollableTabView>
+      </View>
+    )
   }
 });
 
 var styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F0EFF5',
     flex: 1,
+    paddingTop: 64,
   },
-  userTouch: {
-    marginTop: 20,
-  },
-  user: {
-    padding: 8,
-    paddingLeft: 10,
-    paddingRight: 10,
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#EDECF1',
-  },
-  avatar: {
-    backgroundColor: 'lightGray',
-    borderRadius: 2,
-    width: 48,
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: 'gray',
-    borderWidth: 0.5,
-  },
-  nameInfo: {
-    flexDirection: 'column',
-    marginLeft: 8,
-    justifyContent: 'center',
+  tabView: {
     flex: 1,
+    padding: 10,
+    backgroundColor: 'rgba(0,0,0,0.01)',
   },
-  name: {
-    color: 'black',
-    fontSize: 17,
+  card: {
+    borderWidth: 1,
+    backgroundColor: '#fff',
+    borderColor: 'rgba(0,0,0,0.1)',
+    margin: 5,
+    height: 150,
+    padding: 15,
+    shadowColor: '#ccc',
+    shadowOffset: {width: 2, height: 2},
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
   },
-  arrow: {
-    width: ICON_SIZE,
-    height: ICON_SIZE,
-  },
-  settings: {
-    height: 44,
-  },
-  logout: {
-    height: 44,
-    borderRadius: 3,
-    margin: 10,
-    marginTop: 40,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  logoutText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 17,
-  }
 });
 
 module.exports = SearchComponent;
