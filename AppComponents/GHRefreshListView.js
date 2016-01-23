@@ -22,6 +22,7 @@ const FloorListView = React.createClass({
   _dataSource: [],
   _page: 1,
   _maxPage: -1,
+  _loading: false,
 
   propTypes: {
     /**
@@ -40,6 +41,14 @@ const FloorListView = React.createClass({
      * render the row, like ListView
      */
     renderRow: PropTypes.func,
+    /**
+     * context object
+     */
+    context: PropTypes.func,
+    /**
+     * Error holder (error) => {}
+     */
+    renderErrorPlaceholder: PropTypes.func,
   },
 
   getInitialState() {
@@ -76,12 +85,27 @@ const FloorListView = React.createClass({
   clearData() {
     this._dataSource = [];
     this._setNeedsRenderList([]);
+    this._page = 1;
+    this._maxPage = 1;
+    this._loading = false;
+  },
+
+  _pageString(path) {
+    const testReg = /\w+[?]\w+/;
+    if (testReg.test(path)) {
+      path += '&page=' + this._page;
+    } else {
+      path += '?page=' + this._page;
+    }
+
+    return path;
   },
 
   reloadData() {
     let path = this.props.reloadPromisePath();
-    if (!path) return;
+    if (!path || this._loading) return;
 
+    this._loading = true;
     this.setState({
       lastError: {isReloadError: false, error: null},
       loaded: false,
@@ -89,7 +113,7 @@ const FloorListView = React.createClass({
     this._dataSource = [];
     this._page = 1;
 
-    path += '&page=' + this._page;
+    path = this._pageString(path);
     const reloadPromise = GHService.fetchPromise(path);
     reloadPromise
       .then(value => {
@@ -108,6 +132,10 @@ const FloorListView = React.createClass({
 
         const rdata = this.props.handleReloadData(value);
         this._setNeedsRenderList(rdata);
+
+        if (this._dataSource.length == 0) {
+          throw new Error('Not Found');
+        }
       })
       .catch(err => {
         this.showError(err);
@@ -123,6 +151,8 @@ const FloorListView = React.createClass({
         if (node && this.props.enablePullToRefresh) {
           DXRefreshControl.endRefreshing(node);
         }
+
+        this._loading = false;
       })
   },
 
@@ -134,7 +164,7 @@ const FloorListView = React.createClass({
     let path = this.props.reloadPromisePath();
     if (!path) return;
 
-    path += '&page=' + this._page;
+    path = this._pageString(path);
     const appendPromise = GHService.fetchPromise(path);
     appendPromise
      .then(value => {
@@ -178,13 +208,19 @@ const FloorListView = React.createClass({
     }
 
     if (this.state.lastError.isReloadError) {
-      return (
-        <ErrorPlaceholder
-          title={this.state.lastError.error.message}
-          desc={'Oops, tap to reload'}
-          onPress={this.reloadData}/>
-      );
+      const error = this.state.lastError.error;
+      if (this.props.renderErrorPlaceholder) {
+        return this.props.renderErrorPlaceholder(error);
+      } else {
+        return (
+          <ErrorPlaceholder
+            title={error.message}
+            desc={'Oops, tap to reload'}
+            onPress={this.reloadData}/>
+        );
+      }
     }
+
     return (
       <View style={{flex: 1, backgroundColor: 'white'}} ref={CONTAINERREF}>
         <ListView

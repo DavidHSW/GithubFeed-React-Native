@@ -9,6 +9,8 @@ const DefaultTabBar = require('./DefaultTabBar');
 const GHRefreshListView = require('./GHRefreshListView');
 const RepoCell = require('./RepoCell');
 const UserCell = require('./UserCell');
+const ErrorPlaceholder = require('../commonComponents/ErrorPlacehoderComponent');
+const LanguageComponent = require('./LanguageComponent');
 
 const {
   View,
@@ -31,6 +33,12 @@ const SearchComponent = React.createClass({
   _text: '',
   _lvs: [],
 
+  getInitialState() {
+    return {
+      toggleLanguage: false,
+    }
+  },
+
   _resetLoadedStatus() {
     this._lvs.forEach((lv) => {
       lv.clearData();
@@ -52,6 +60,16 @@ const SearchComponent = React.createClass({
     this._selectTab = tab.i;
     const refreshListView = this._lvs[tab.i];
     refreshListView && refreshListView.reloadDataIfNeed();
+  },
+
+  onChooseLang() {
+    this.setState({
+      toggleLanguage: !this.state.toggleLanguage,
+    });
+  },
+
+  onSelectLanguage(language) {
+    console.log('onSelectLanguage', language);
   },
 
   componentWillMount() {
@@ -108,11 +126,67 @@ const SearchComponent = React.createClass({
     return <UserCell key={rowID} user={rowData} navigator={this.props.navigator}/>;
   },
 
+  renderRepoError(error) {
+    let message = error.message;
+    if (message == 'Not Found') {
+      message = message + ' ' + this._text + ' for repo';
+    }
+    const reloadData = this._lvs[0] && this._lvs[0].reloadData;
+
+    return (
+      <ErrorPlaceholder
+        title={message}
+        desc={'repo load failed'}
+        onPress={this._lvs[0].reloadData}/>
+    );
+  },
+
+  renderUserError(error) {
+    let message = error.message;
+    if (message == 'Not Found') {
+      message = message + ' ' + this._text + ' for user';
+    }
+    const reloadData = this._lvs[1] && this._lvs[1].reloadData;
+
+    return (
+      <ErrorPlaceholder
+        title={message}
+        desc={'user load failed'}
+        onPress={this._lvs[1].reloadData}/>
+    );
+  },
+
+  renderOrgError(error) {
+    let message = error.message;
+    if (message == 'Not Found') {
+      message = message + ' ' + this._text + ' for org';
+    }
+    const reloadData = this._lvs[2] && this._lvs[2].reloadData;
+
+    return (
+      <ErrorPlaceholder
+        title={message}
+        desc={'org load failed'}
+        onPress={reloadData}/>
+    );
+  },
+
   render() {
+    let languageCp;
+    if (this.state.toggleLanguage) {
+      languageCp = (
+        <LanguageComponent
+          style={styles.language}
+          onSelectLanguage={this.onSelectLanguage}/>
+      );
+    }
+
     return (
       <View style={styles.container}>
+        {languageCp}
         <ScrollableTabView
           renderTabBar={() => <DefaultTabBar/>}
+          initialPage={0}
           onChangeTab={this.onChangeTab}>
           <GHRefreshListView
             enablePullToRefresh={false}
@@ -121,6 +195,8 @@ const SearchComponent = React.createClass({
             renderRow={this.renderRepoRow}
             reloadPromisePath={this.reloadReopPath}
             handleReloadData={this.handleReloadData}
+            navigator={this.props.navigator}
+            renderErrorPlaceholder={this.renderRepoError}
             >
           </GHRefreshListView>
           <GHRefreshListView
@@ -130,6 +206,9 @@ const SearchComponent = React.createClass({
             renderRow={this.renderUserRow}
             reloadPromisePath={this.reloadUserPath}
             handleReloadData={this.handleReloadData}
+            navigator={this.props.navigator}
+            context={this.searchedText}
+            renderErrorPlaceholder={this.renderUserError}
             >
           </GHRefreshListView>
           <GHRefreshListView
@@ -139,6 +218,9 @@ const SearchComponent = React.createClass({
             renderRow={this.renderUserRow}
             reloadPromisePath={this.reloadOrgPath}
             handleReloadData={this.handleReloadData}
+            navigator={this.props.navigator}
+            context={this.searchedText}
+            renderErrorPlaceholder={this.renderOrgError}
             >
           </GHRefreshListView>
         </ScrollableTabView>
@@ -157,17 +239,8 @@ var styles = StyleSheet.create({
     padding: 10,
     backgroundColor: 'rgba(0,0,0,0.01)',
   },
-  card: {
-    borderWidth: 1,
-    backgroundColor: '#fff',
-    borderColor: 'rgba(0,0,0,0.1)',
-    margin: 5,
-    height: 150,
-    padding: 15,
-    shadowColor: '#ccc',
-    shadowOffset: {width: 2, height: 2},
-    shadowOpacity: 0.5,
-    shadowRadius: 3,
+  language: {
+    height: 320,
   },
 });
 

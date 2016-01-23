@@ -55,13 +55,22 @@ const NavigationBarRouteMapper = {
       case 'login': {
         rightButton = (
           <TouchableOpacity onPress={() => navigator.pop()}>
-            <Text style={[styles.navBarText, {marginRight: 20}]}>
+            <Text style={[styles.navBarText, {marginRight: 10}]}>
               Cancel
             </Text>
           </TouchableOpacity>
         )
       }
         break;
+      case 'search': {
+        rightButton = (
+          <TouchableOpacity onPress={route.sp.onChooseLang}>
+            <Text style={[styles.navBarText, {marginRight: 20, color: Colors.blue}]}>
+              Language
+            </Text>
+          </TouchableOpacity>
+        )
+      }
       default:
     }
 
@@ -131,7 +140,7 @@ const NavigationBarRouteMapper = {
       )
     } else if (title == 'search') {
       return (
-        <View style={[styles.searchBar, {width: ScreenWidth - 50}]}>
+        <View style={[styles.searchBar, {width: ScreenWidth - 40, marginLeft: 40}]}>
           <Icon
             name={'ion|ios-search'}
             size={20}
