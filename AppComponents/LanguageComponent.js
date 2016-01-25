@@ -13,6 +13,7 @@ const {
   Text,
   TouchableHighlight,
   StyleSheet,
+  TouchableOpacity,
 } = React;
 
 const LISTVIEWREF = 'listview';
@@ -20,7 +21,9 @@ const CONTAINERREF = 'container';
 
 const FloorListView = React.createClass({
   propTypes: {
+    languageList: React.PropTypes.string,
     onSelectLanguage: React.PropTypes.func,
+    onCancelChoose: React.PropTypes.func,
   },
 
   getInitialState() {
@@ -29,9 +32,10 @@ const FloorListView = React.createClass({
       sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
     }
     let dataSource = new ListView.DataSource(dataSourceParam);
+    const languageList = this.props.languageList || Languages;
 
     return {
-      dataSource: dataSource.cloneWithRows(Languages),
+      dataSource: dataSource.cloneWithRows(languageList),
     };
   },
 
@@ -52,8 +56,12 @@ const FloorListView = React.createClass({
           dataSource={this.state.dataSource}
           renderRow={this.renderRow}
           automaticallyAdjustContentInsets={false}
-          contentInset={{top: 0, left: 0, bottom: 49, right: 0}}
         />
+      <TouchableOpacity style={styles.chooseLan} onPress={this.props.onCancelChoose}>
+          <Text style={styles.lan}>
+            Cancel
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   },
@@ -102,6 +110,17 @@ const styles = StyleSheet.create({
     height: ICON_SIZE,
     marginRight: 8,
   },
+  chooseLan: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 40,
+  },
+  lan: {
+    color: Colors.blue,
+    fontSize: 16,
+    fontWeight: 'bold',
+  }
 });
 
 module.exports = FloorListView;

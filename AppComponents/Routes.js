@@ -18,6 +18,7 @@ const SettingsComponent = require('./SettingsComponent');
 const RepoListComponent = require('./RepoListComponent');
 const ExploreComponent = require('./ExploreComponent');
 const SearchComponent = require('./SearchComponent');
+const ShowCaseComponent = require('./ShowcaseComponent');
 
 const {
   Navigator,
@@ -62,15 +63,15 @@ const NavigationBarRouteMapper = {
         )
       }
         break;
-      case 'search': {
-        rightButton = (
-          <TouchableOpacity onPress={route.sp.onChooseLang}>
-            <Text style={[styles.navBarText, {marginRight: 20, color: Colors.blue}]}>
-              Language
-            </Text>
-          </TouchableOpacity>
-        )
-      }
+      // case 'search': {
+      //   rightButton = (
+      //     <TouchableOpacity onPress={route.sp.onChooseLang}>
+      //       <Text style={[styles.navBarText, {marginRight: 20, color: Colors.blue}]}>
+      //         Language
+      //       </Text>
+      //     </TouchableOpacity>
+      //   )
+      // }
       default:
     }
 
@@ -118,6 +119,9 @@ const NavigationBarRouteMapper = {
         break;
       case 'search':
         title = 'search';
+        break;
+      case 'showcase':
+        title = route.obj.name;
         break;
     }
     const searchPlaceholder = 'Search users, repos';
@@ -234,6 +238,8 @@ const routes = {
          * So need some better approach.
          */
         return <SearchComponent navigator={navigator} route={route}/>;
+      case 'showcase':
+        return <ShowCaseComponent navigator={navigator} showcase={route.obj}/>;
     }
 
     return null;

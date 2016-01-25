@@ -273,7 +273,12 @@ const RepoToolBar = React.createClass({
     if (owner) {
       userCp = (
         <TouchableOpacity onPress={() => {
-          this.props.navigator.push({id: 'user', obj: owner});
+          const type = owner.type;
+          if (type == 'User') {
+            this.props.navigator.push({id: 'user', obj: owner});
+          } else {
+            this.props.navigator.push({id: 'org', obj: owner});
+          }
         }}>
           <View style={styles.repoUser}>
             <Image

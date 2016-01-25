@@ -123,7 +123,7 @@ const FloorListView = React.createClass({
   },
 
   appendPage() {
-    if (!this.props.needNextPage()) return;
+    if (!this.props.needNextPage || !this.props.needNextPage()) return;
 
     console.log('append Page');
     const appendPromise = this.props.appendPromise();

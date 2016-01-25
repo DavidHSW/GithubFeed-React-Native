@@ -11,6 +11,7 @@ const RepoCell = require('./RepoCell');
 const UserCell = require('./UserCell');
 const ErrorPlaceholder = require('../commonComponents/ErrorPlacehoderComponent');
 const LanguageComponent = require('./LanguageComponent');
+const ExploreCell = require('./ExploreCell');
 
 const {
   View,
@@ -27,6 +28,8 @@ const {
 } = React;
 
 const ICON_SIZE = 30;
+const LAN_PLACEHOLDER = 'Choose Language';
+const LAN_ALL_LANGUAGE = 'All Languages';
 
 const SearchComponent = React.createClass({
   _selectTab: 0,
@@ -36,6 +39,7 @@ const SearchComponent = React.createClass({
   getInitialState() {
     return {
       toggleLanguage: false,
+      currentLanguage: LAN_PLACEHOLDER,
     }
   },
 
@@ -70,6 +74,26 @@ const SearchComponent = React.createClass({
 
   onSelectLanguage(language) {
     console.log('onSelectLanguage', language);
+    if (this.state.currentLanguage == language) {
+      this.setState({
+        toggleLanguage: false,
+      });
+
+      return;
+    };
+
+    this.setState({
+      toggleLanguage: false,
+      currentLanguage: language,
+    });
+
+    this._lvs[this._selectTab].reloadData();
+  },
+
+  onCancelChoose() {
+    this.setState({
+      toggleLanguage: false,
+    });
   },
 
   componentWillMount() {
@@ -87,6 +111,10 @@ const SearchComponent = React.createClass({
 
     let apiPath = GHService.apiPath();
     apiPath += '/search/repositories?' + 'q=' + this._text;
+    if (this.state.currentLanguage != LAN_PLACEHOLDER
+        && this.state.currentLanguage != LAN_ALL_LANGUAGE) {
+      apiPath += '+language:' + this.state.currentLanguage;
+    }
 
     return apiPath;
   },
@@ -96,6 +124,10 @@ const SearchComponent = React.createClass({
 
     let apiPath = GHService.apiPath();
     apiPath += '/search/users?' + 'q=' + this._text;
+    if (this.state.currentLanguage != LAN_PLACEHOLDER
+        && this.state.currentLanguage != LAN_ALL_LANGUAGE) {
+      apiPath += '+language:' + this.state.currentLanguage;
+    }
 
     return apiPath;
   },
@@ -115,7 +147,7 @@ const SearchComponent = React.createClass({
   },
 
   renderRepoRow(rowData, sectionID, rowID, highlightRow) {
-    return <RepoCell repo={rowData} navigator={this.props.navigator}/>;
+    return <ExploreCell trendRepo={rowData} navigator={this.props.navigator}/>;
   },
 
   renderUserRow(rowData, sectionID, rowID, highlightRow) {
@@ -137,7 +169,7 @@ const SearchComponent = React.createClass({
       <ErrorPlaceholder
         title={message}
         desc={'repo load failed'}
-        onPress={this._lvs[0].reloadData}/>
+        onPress={reloadData}/>
     );
   },
 
@@ -152,7 +184,7 @@ const SearchComponent = React.createClass({
       <ErrorPlaceholder
         title={message}
         desc={'user load failed'}
-        onPress={this._lvs[1].reloadData}/>
+        onPress={reloadData}/>
     );
   },
 
@@ -177,7 +209,16 @@ const SearchComponent = React.createClass({
       languageCp = (
         <LanguageComponent
           style={styles.language}
-          onSelectLanguage={this.onSelectLanguage}/>
+          onSelectLanguage={this.onSelectLanguage}
+          onCancelChoose={this.onCancelChoose}/>
+      );
+    } else {
+      languageCp = (
+        <TouchableOpacity style={styles.chooseLan} onPress={this.onChooseLang}>
+          <Text style={styles.lan}>
+            {this.state.currentLanguage}
+          </Text>
+        </TouchableOpacity>
       );
     }
 
@@ -242,6 +283,17 @@ var styles = StyleSheet.create({
   language: {
     height: 320,
   },
+  chooseLan: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 40,
+  },
+  lan: {
+    color: Colors.blue,
+    fontSize: 16,
+    fontWeight: 'bold',
+  }
 });
 
 module.exports = SearchComponent;

@@ -1,9 +1,18 @@
 const React = require('react-native');
 const GHService = require('../networkService/GithubServices');
 const CommonComponents = require('../commonComponents/CommonComponents');
+const ScrollableTabView = require('react-native-scrollable-tab-view');
 const { Icon, } = require('react-native-icons');
 const Colors = require('../commonComponents/Colors');
-const SettingComponent = require('./SettingsCell');
+const DefaultTabBar = require('./DefaultTabBar');
+const GHRefreshListView = require('./GHRefreshListView');
+const RepoCell = require('./RepoCell');
+const UserCell = require('./UserCell');
+const Swiper = require('react-native-swiper');
+const LanguageComponent = require('./LanguageComponent');
+const TrendLanguages = require('../commonComponents/TrendLanguages.json');
+const ShowCasesComponent = require('./ShowCasesComponent');
+const ExploreCell = require('./ExploreCell');
 
 const {
   View,
@@ -14,153 +23,212 @@ const {
   TouchableHighlight,
   Image,
   TouchableOpacity,
-  Navigator,
-  ActionSheetIOS,
+  ListView,
 } = React;
 
-const ICON_SIZE = 30;
+const ICON_SIZE = 12;
+const BASE_TRENDING_PATH = 'http://trending.codehub-app.com/v2/trending';
+const LAN_PLACEHOLDER = 'Choose Language';
+const LAN_ALL_LANGUAGE = 'All Languages';
 
-const PersonComponent = React.createClass({
-  pressLogin() {
-    const isLogined = GHService.isLogined();
-    if (isLogined) return;
+const OrgComponent = React.createClass({
+  _selectTab: 0,
+  _lvs: [],
 
-    this.props.navigator.push({
-      id: 'login',
-      sceneConfig: Navigator.SceneConfigs.FloatFromBottom,
-      title: 'Please Login now',
+  getInitialState() {
+    return {
+      toggleLanguage: false,
+      currentLanguage: LAN_PLACEHOLDER,
+    }
+  },
+
+  _resetLoadedStatus() {
+    this._lvs.forEach((lv) => {
+      lv.clearData();
+    })
+  },
+
+  onChooseLang() {
+    this.setState({
+      toggleLanguage: !this.state.toggleLanguage,
     });
   },
 
-  pressLogout() {
-    ActionSheetIOS.showActionSheetWithOptions({
-      title: 'Are you sure to leave?',
-      options:['logout', 'cancel'],
-      cancelButtonIndex: 1,
-      destructiveButtonIndex: 0,
-    },
-    (buttonIndex) => {
-      if (buttonIndex == 0) {
-        GHService.logout();
-      }
+  onSelectLanguage(language) {
+    if (this.state.currentLanguage == language) {
+      this.setState({
+        toggleLanguage: false,
+      });
+
+      return;
+    };
+
+    this.setState({
+      toggleLanguage: false,
+      currentLanguage: language,
     });
+
+    this._resetLoadedStatus();
+    this._lvs[this._selectTab].reloadData();
+  },
+
+  onCancelChoose() {
+    this.setState({
+      toggleLanguage: false,
+    });
+  },
+
+  onChangeTab(tab) {
+    this._selectTab = tab.i;
+    const refreshListView = this._lvs[tab.i];
+    refreshListView && refreshListView.reloadDataIfNeed();
+  },
+
+  _getPath(desc) {
+    let path = BASE_TRENDING_PATH + '?since=' + desc;
+    const currentLanguage = this.state.currentLanguage;
+    if (currentLanguage != LAN_PLACEHOLDER && currentLanguage != LAN_ALL_LANGUAGE) {
+      path = path + '&language=' + this.state.currentLanguage.toLowerCase();
+    }
+
+    console.log('get path', path);
+
+    return path;
+  },
+
+  reloadDailyPath() {
+    return this._getPath('daily');
+  },
+
+  reloadWeeklyPath() {
+    return this._getPath('weekly');
+  },
+
+  reloadMonthlyPath() {
+    return this._getPath('monthly');
+  },
+
+  handleReloadData(value) {
+    const json = value._bodyInit.length > 0 && JSON.parse(value._bodyInit);
+    return json;
+  },
+
+  renderRepo(rowData, sectionID, rowID, highlightRow) {
+    return <ExploreCell key={rowID} trendRepo={rowData} navigator={this.props.navigator}/>;
   },
 
   render() {
-    const user = GHService.currentUser();
-    const isLogined = GHService.isLogined();
-    const stateText = isLogined ? 'Logined' : 'Better Press to Login';
-    const stateColor = isLogined ? Colors.green : 'orange';
-    const logoutColor = isLogined ? Colors.red : 'orange';
-    const avatarURL = user.avatar || 'a';
-    return (
-      <ScrollView
-        style={styles.container}
-        automaticallyAdjustContentInsets={false}
-        contentInset={{top: 64, left: 0, bottom: 49, right: 0}}
-        contentOffset={{x:0, y:-64}}
-        >
-        <TouchableHighlight
-          underlayColor={'lightGray'}
-          style={styles.userTouch}
-          onPress={() => this.props.navigator.push({id: 'user', obj: user})}>
-          <View style={styles.user}>
-            <Image
-              source={{uri: avatarURL}}
-              style={styles.avatar}
-              onLoadEnd={this.avatarLoadEnd}/>
-            <View style={styles.nameInfo}>
-              <Text style={styles.name}>
-                {user.login}
-              </Text>
-            </View>
-            <Text
-              style={[styles.loginState, {color: stateColor}]}
-              onPress={this.pressLogin}>
-              {stateText}
-            </Text>
-            <Icon
-              name='ion|ios-arrow-right'
-              size={ICON_SIZE}
-              style={styles.arrow}
-              color={Colors.textGray}/>
-            </View>
-        </TouchableHighlight>
-        <SettingComponent
-          onPress={() => this.props.navigator.push({id: 'settings'})}
-          />
-        <TouchableOpacity
-          style={[styles.logout, {backgroundColor: logoutColor}]}
-          onPress={this.pressLogout}>
-          <Text style={styles.logoutText}>
-            Logout
+    let languageCp;
+    if (this.state.toggleLanguage) {
+      languageCp = (
+        <LanguageComponent
+          languageList={TrendLanguages}
+          style={styles.language}
+          onSelectLanguage={this.onSelectLanguage}
+          onCancelChoose={this.onCancelChoose}/>
+      );
+    } else {
+      languageCp = (
+        <TouchableOpacity style={styles.chooseLan} onPress={this.onChooseLang}>
+          <Text style={styles.lan}>
+            {this.state.currentLanguage}
           </Text>
         </TouchableOpacity>
-      </ScrollView>
-    );
+      );
+    }
+
+    return (
+      <View style={{backgroundColor: 'white', paddingTop: 64, flex: 1}}>
+        <ShowCasesComponent style={styles.showcase} navigator={this.props.navigator}/>
+        <View style={styles.poplular}>
+          <Text style={{fontWeight: 'bold',fontSize: 15, color: Colors.textGray}}>
+            Popular repos
+          </Text>
+        </View>
+        {languageCp}
+        <ScrollableTabView
+          renderTabBar={() => <DefaultTabBar />}
+          onChangeTab={this.onChangeTab}
+          >
+          <GHRefreshListView
+            enablePullToRefresh={false}
+            ref={(cp) => this._lvs[0] = cp}
+            tabLabel="Daily"
+            renderRow={this.renderRepo}
+            reloadPromisePath={this.reloadDailyPath}
+            handleReloadData={this.handleReloadData}
+            navigator={this.props.navigator}
+            >
+          </GHRefreshListView>
+          <GHRefreshListView
+            enablePullToRefresh={false}
+            ref={(cp) => this._lvs[1] = cp}
+            tabLabel="Weekly"
+            renderRow={this.renderRepo}
+            reloadPromisePath={this.reloadWeeklyPath}
+            handleReloadData={this.handleReloadData}
+            navigator={this.props.navigator}
+            >
+          </GHRefreshListView>
+          <GHRefreshListView
+            enablePullToRefresh={false}
+            ref={(cp) => this._lvs[2] = cp}
+            tabLabel="Monthly"
+            renderRow={this.renderRepo}
+            reloadPromisePath={this.reloadMonthlyPath}
+            handleReloadData={this.handleReloadData}
+            navigator={this.props.navigator}
+            >
+          </GHRefreshListView>
+        </ScrollableTabView>
+      </View>
+    )
   }
 });
+
 
 var styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#F0EFF5',
-    flex: 1,
-  },
-  userTouch: {
-    marginTop: 20,
-  },
-  user: {
-    padding: 8,
-    paddingLeft: 10,
-    paddingRight: 10,
-    backgroundColor: 'white',
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#EDECF1',
-  },
-  avatar: {
-    backgroundColor: 'lightGray',
-    borderRadius: 2,
-    width: 48,
-    height: 48,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderColor: 'gray',
-    borderWidth: 0.5,
-  },
-  nameInfo: {
-    flexDirection: 'column',
-    marginLeft: 8,
-    justifyContent: 'center',
-    flex: 1,
-  },
-  name: {
-    color: 'black',
-    fontSize: 17,
-  },
-  arrow: {
+  icon: {
     width: ICON_SIZE,
     height: ICON_SIZE,
+    marginRight: 3,
   },
-  settings: {
-    height: 44,
+  container: {
+    flex: 1,
+    backgroundColor: 'white'
   },
-  logout: {
-    height: 44,
-    borderRadius: 3,
-    margin: 10,
-    marginTop: 40,
+  scvContainerStyle: {
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
+  },
+  iconTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
+  showcase: {
+    height: 120,
+  },
+  poplular: {
+    padding: 5,
+    borderBottomWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#F2F2F2',
+  },
+  language: {
+    height: 320,
+  },
+  chooseLan: {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    height: 40,
   },
-  logoutText: {
-    color: 'white',
+  lan: {
+    color: Colors.blue,
+    fontSize: 16,
     fontWeight: 'bold',
-    fontSize: 17,
-  }
+  },
 });
 
-module.exports = PersonComponent;
+module.exports = OrgComponent;
