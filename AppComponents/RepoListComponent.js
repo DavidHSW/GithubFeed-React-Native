@@ -1,15 +1,15 @@
 const React = require('react-native');
 const RefreshListView = require('./RefreshListView');
 const GHService = require('../networkService/GithubServices');
-const UserCell = require('./UserCell');
+const RepoCell = require('./RepoCell');
 
 let USER_PAGE = 1;
 
-const UserListComponent = React.createClass({
+const RepoListComponent = React.createClass({
   _endPage: -1,
 
   PropTypes: {
-    userListURL: React.PropTypes.string,
+    repoListURL: React.PropTypes.string,
   },
 
   handleReloadData(response) {
@@ -49,14 +49,12 @@ const UserListComponent = React.createClass({
   },
 
   loadDataPromise() {
-    let URL = this.props.userListURL + '?page=' + USER_PAGE;
+    let URL = this.props.repoListURL + '?page=' + USER_PAGE;
     return GHService.fetchPromise(URL);
   },
 
   renderRow(rowData, sectionID, rowID, highlightRow) {
-    return (
-      <UserCell key={rowID} user={rowData} navigator={this.props.navigator}/>
-    )
+    return <RepoCell repo={rowData} navigator={this.props.navigator}/>
   },
 
   handleError(err) {
@@ -78,4 +76,4 @@ const UserListComponent = React.createClass({
   },
 });
 
-module.exports = UserListComponent;
+module.exports = RepoListComponent;

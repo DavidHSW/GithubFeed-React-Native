@@ -1,68 +1,67 @@
 const React = require('react-native');
+const RefreshListView = require('./RefreshListView');
+const GHService = require('../networkService/GithubServices');
+const GHCell = require('./GHEventCell');
 
 const {
+  StyleSheet,
+  ListView,
   View,
   ActivityIndicatorIOS,
   Text,
-  StyleSheet,
+  Navigator,
+  TouchableOpacity,
 } = React;
 
-var styles = StyleSheet.create({
-  evelatorBar: {
-    height: 30,
-  }
-});
+let FeedsPage = 1;
+const MAX_PAGE = 5;
+const FeedComponent = React.createClass({
+  handleReloadData(response) {
+    const body = response._bodyInit;
+    const jsonResult = JSON.parse(body);
 
-var numbers = ['Repos', 'Following', 'Stars', 'ok', 'baby', 'come', 'go', 'where', 'mars', 'japan', 'shanghai', 'nanjing'];
+    return jsonResult;
+  },
 
-const UserComponent = React.createClass({
-  getInitialState() {
-    return {
-      selectedTab: 0,
-      config: {
-        a: 1,
-        b: 2,
-      }
+  needNextPage() {
+    return FeedsPage < MAX_PAGE;
+  },
+
+  reloadPromise() {
+    FeedsPage = 1;
+    return GHService.getFeeds(FeedsPage);
+  },
+
+  appendPromise() {
+    FeedsPage ++;
+    return GHService.getFeeds(FeedsPage);
+  },
+
+  renderRow(rowData, sectionID, rowID, highlightRow) {
+    return (
+      <GHCell key={rowID} ghEvent={rowData} navigator={this.props.navigator}/>
+    )
+  },
+
+  handleError(err) {
+    if (!err.isReloadError) {
+      FeedsPage --;
     }
-  },
-
-  componentDidMount() {
-    // this.state.config.a = 3;
-    this.setState({
-      config:  {},
-    });
-  },
-
-  renderRounds() {
-
-    return numbers.map((n) => {
-      return (
-        <View tabLabel={n} style={{backgroundColor: 'red', margin: 100, flex: 1}}/>
-      )
-    })
-  },
-
-  onChangeTab({i, ref}) {
-    setTimeout(() => {
-      this.setState({selectedTab: i});
-    }, 500);
   },
 
   render() {
     return (
-      <View style={styles.container}>
-      </View>
-    )
-  }
-});
-
-var styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 64,
-    backgroundColor: 'rgba(0,0,0,0.01)',
+      <RefreshListView
+        handleReloadData={this.handleReloadData}
+        handleAppendData={this.handleReloadData}
+        reloadPromise={this.reloadPromise}
+        needNextPage={this.needNextPage}
+        appendPromise={this.appendPromise}
+        renderRow={this.renderRow}
+        handleError={this.handleError}
+      />
+    );
   },
 });
 
-
-module.exports = UserComponent;
+module.exports = FeedComponent;

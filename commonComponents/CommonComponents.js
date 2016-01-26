@@ -31,7 +31,6 @@ class CommonComponents {
       </View>
     )
   }
-
 }
 
 module.exports = CommonComponents;

@@ -18,7 +18,12 @@ const UserCell = React.createClass({
 
   openTargetUser() {
     const user = this.props.user;
-    this.props.navigator.push({id: 'user', obj: user});
+    const type = user.type;
+    if (type == 'User') {
+      this.props.navigator.push({id: 'user', obj: user});
+    } else {
+      this.props.navigator.push({id: 'org', obj: user});
+    }
   },
 
   render() {

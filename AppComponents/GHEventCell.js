@@ -90,20 +90,24 @@ const GHCell = React.createClass({
   openTargetRepo() {
     const ghEvent = this.props.ghEvent;
     let targetRepo = ghEvent.repo;
-    targetRepo.html = 'https://github.com/' + targetRepo.name + '/blob/master/README.md';
-    targetRepo.title = targetRepo.name;
-    this.props.navigator.push({id: 'web', obj: targetRepo});
+    if (targetRepo) {
+      targetRepo.html = 'https://github.com/' + targetRepo.name + '/blob/master/README.md';
+      targetRepo.title = targetRepo.name;
+      this.props.navigator.push({id: 'web', obj: targetRepo});
+    }
   },
 
   openAuthor() {
     const ghEvent = this.props.ghEvent;
-    const actor = ghEvent.actor;
-
-    this.props.navigator.push({id: 'user', obj: actor});
-  },
-
-  openTargetUser() {
-
+    const user = ghEvent.actor;
+    if (user) {
+      const type = user.type;
+      if (type == 'User') {
+        this.props.navigator.push({id: 'user', obj: user});
+      } else {
+        this.props.navigator.push({id: 'org', obj: user});
+      }
+    }
   },
 
   openWebEvent() {
@@ -125,7 +129,7 @@ const GHCell = React.createClass({
       }
         break;
       default:
-        targetRepo.html = 'https://github.com/' + this.props.repo.name + '/blob/master/README.md';
+        targetRepo.html = 'https://github.com';
     }
 
     this.props.navigator.push({id: 'web', obj: targetRepo});
@@ -261,7 +265,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'stretch',
   },
-
   cellUp: {
     margin: 10,
     height: 40,
@@ -271,27 +274,22 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     marginBottom: 1,
   },
-
   avatar: {
     width: 40,
     height: 40,
     backgroundColor: Colors.backGray
   },
-
   username: {
     marginLeft: 10,
-    height: 19,
     color: '#4078C0',
     fontSize: 15,
   },
-
   textActionContainer: {
     margin: 10,
     marginTop: 7,
     marginBottom: 10,
     marginLeft: 10,
   },
-
   textDesContainer: {
     margin: 10,
     marginTop: -5,
@@ -299,33 +297,27 @@ const styles = StyleSheet.create({
     marginLeft: 25,
     borderStyle: 'dashed',
   },
-
   linkText: {
     color: '#4078C0',
     fontSize: 15,
     fontWeight: 'normal',
   },
-
   actionText: {
     color: '#666666',
     fontSize: 16,
     fontWeight: 'bold',
   },
-
   normalText: {
     color: '#666666',
     fontSize: 15,
     fontWeight: 'normal',
   },
-
   commentText: {
     color: Colors.textGray,
   },
-
   createAt: {
     marginLeft: 10,
     marginTop: 2,
-    height: 14,
     fontSize: 11,
     color: '#BFBFBF',
   },

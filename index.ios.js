@@ -21,13 +21,10 @@ const LoginState = {
   pending: 0,
   onboard: 1,
   unOnboard: 2,
+  needLogin: 3,
 }
 
 const GitFeedApp = React.createClass({
-  mixins: [
-    LoginMixin,
-  ],
-
   getInitialState() {
     return {
       userState: LoginState.pending,
@@ -38,7 +35,7 @@ const GitFeedApp = React.createClass({
     GHService.queryLoginState()
       .then(value => {
         let lst = LoginState.pending;
-        if (value.username.length > 0) {
+        if (value.login.length > 0) {
           lst = LoginState.onboard;
         } else {
           lst = LoginState.unOnboard;
@@ -50,6 +47,30 @@ const GitFeedApp = React.createClass({
           userState: lst,
         });
       })
+
+    GHService.addListener('didLogout', () => {
+      this.setState({
+        userState: LoginState.unOnboard,
+      });
+    });
+  },
+
+  componentWillUnmount: function() {
+    GHService.removeListener('didLogout');
+  },
+
+  didOnboard(user, needLogin) {
+    let lst = user == null ? LoginState.unOnboard : LoginState.onboard;
+    if (needLogin) lst = LoginState.needLogin;
+    this.setState({
+      userState: lst,
+    });
+  },
+
+  didLogin() {
+    this.setState({
+      userState: LoginState.onboard,
+    });
   },
 
   render() {
@@ -64,21 +85,13 @@ const GitFeedApp = React.createClass({
       }
         break;
       case LoginState.unOnboard: {
-        cp = <OnboardComponent />;
+        cp = <OnboardComponent didOnboard={this.didOnboard}/>;
       }
         break;
-    }
-
-    if (this.state.onboarded || this.state.logined) {
-      cp = <RootTab />;
-    }
-
-    if (this.state.needOnboard) {
-      cp = <OnboardComponent />;
-    }
-
-    if (this.state.needLogin) {
-      cp = <LoginComponent />
+      case LoginState.needLogin: {
+        cp = <LoginComponent didLogin={this.didLogin}/>;
+      }
+        break;
     }
 
     return cp;

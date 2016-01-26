@@ -28,11 +28,11 @@ const RootTabBar = React.createClass({
               selectedTab: TABBABIDS[0],
             });
           }}>
-          <FeedComponent/>
+          {Routes.navigator('feed')}
         </TabBarIOS.Item>
         <TabBarIOS.Item
-          title="Watching"
-          iconName={'ion|ios-eye-outline'}
+          title="Explore"
+          iconName={'ion|ios-search-strong'}
           selectedIconName={'ion|ios-eye'}
           selected={this.state.selectedTab === TABBABIDS[1]}
           onPress={() => {
@@ -40,7 +40,7 @@ const RootTabBar = React.createClass({
               selectedTab: TABBABIDS[1],
             });
           }}>
-          <NavigatorIOS style={{flex: 1}} initialRoute={Routes.watchings()}/>
+          {Routes.navigator('explore')}
         </TabBarIOS.Item>
         <TabBarIOS.Item
           title="Trend"
@@ -53,11 +53,11 @@ const RootTabBar = React.createClass({
               selectedTab: TABBABIDS[2],
             });
           }}>
-          <NavigatorIOS style={{flex: 1}} initialRoute={Routes.trends()}/>
+          {Routes.navigator('feed')}
         </TabBarIOS.Item>
         <TabBarIOS.Item
-          title="Setting"
-          iconName={'ion|ios-gear-outline'}
+          title="Settings"
+          iconName={'ion|ios-person-outline'}
           selectedIconName={'ion|ios-gear'}
           selected={this.state.selectedTab === TABBABIDS[3]}
           onPress={() => {
@@ -65,7 +65,7 @@ const RootTabBar = React.createClass({
               selectedTab: TABBABIDS[3],
             });
           }}>
-          <NavigatorIOS style={{flex: 1}} initialRoute={Routes.personal()}/>
+          {Routes.navigator('me')}
         </TabBarIOS.Item>
       </TabBarIOS>
     )

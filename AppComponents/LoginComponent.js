@@ -14,11 +14,142 @@ const {
   TextInput,
 } = React;
 
+const WEBVIEWREF = 'webview';
+
+const LoginComponent = React.createClass({
+  PropTypes: {
+    /* A next action promise */
+    nextPromise: React.PropTypes.object,
+    didLogin: React.PropTypes.func,
+  },
+
+  getInitialState() {
+    return {
+      username: GHService.currentUser().login,
+      password: GHService.currentUser().password,
+      logining: false,
+      loginError: null,
+    }
+  },
+
+  submitLogin() {
+    const state = this.state;
+    if (this.state.logining) return;
+
+    this.setState({
+      logining: true,
+      loginError: null,
+    });
+    console.log('submitLogin');
+    GHService.login(state.username, state.password)
+      .then(() => {
+        this.props.navigator && this.props.navigator.pop();
+        this.props.didLogin && this.props.didLogin();
+
+        const nextPromise = this.props.nextPromise && this.props.nextPromise();
+        return nextPromise;
+      })
+      .catch(err => {
+        console.log('login error', err);
+        this.setState({
+          loginError: err,
+        });
+      })
+      .done(() => {
+        this.setState({
+          logining: false,
+        });
+      })
+  },
+
+  onNameChange(text) {
+    this.setState({
+      username: text,
+    });
+  },
+
+  onPwdChange(text) {
+    this.setState({
+      password: text,
+    });
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return this.state.logining != nextState.logining;
+  },
+
+  render() {
+    let signInCp;
+    if (this.state.logining) {
+      signInCp = (
+        <ActivityIndicatorIOS
+          style={styles.indicator}
+          size="small"
+        />
+      )
+    }
+
+    let errorDesc;
+    if (this.state.loginError) {
+      errorDesc = (
+        <Text style={styles.errorDesc}>
+          {this.state.loginError.message}
+        </Text>
+      );
+    }
+
+    return (
+      <View style={{backgroundColor: 'white'}}>
+        {errorDesc}
+        <View style={styles.loginCard}>
+          <View style={styles.up}>
+            <Text style={styles.introText}>
+              Sign in to Github
+            </Text>
+            {signInCp}
+          </View>
+          <View style={styles.down}>
+            <Text style={styles.nameAndPwd}>
+              Username or email
+            </Text>
+            <TextInput
+              style={styles.textInput}
+              returnKeyType={'next'}
+              onChangeText={this.onNameChange}
+              defaultValue={this.state.username}
+            />
+            <Text style={styles.nameAndPwd}>
+              Password
+            </Text>
+            <TextInput
+              style={styles.textInput}
+              returnKeyType={'done'}
+              onSubmitEditing={this.submitLogin}
+              onChangeText={this.onPwdChange}
+              secureTextEntry={true}
+              defaultValue={this.state.password}
+            />
+            <TouchableHighlight
+              style={styles.confirm}
+              onPress={this.submitLogin}
+              underlayColor={Colors.backGray}
+              >
+              <Text style={[styles.nameAndPwd, {'textAlign': 'center'}]}>
+                Sign in
+              </Text>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </View>
+    )
+  },
+});
+
 const styles = StyleSheet.create({
   loginCard: {
     height: 250,
     margin: 20,
-    marginTop: 80,
+    marginTop: 64,
     borderWidth: 1,
     borderColor: Colors.borderColor,
     borderRadius: 2,
@@ -85,102 +216,11 @@ const styles = StyleSheet.create({
     borderColor: Colors.borderColor,
   },
 
-});
-
-const WEBVIEWREF = 'webview';
-
-const LoginComponent = React.createClass({
-  getInitialState() {
-    return {
-      username: '',
-      password: '',
-      logining: false,
-    }
-  },
-
-  submitLogin() {
-    const state = this.state;
-    console.log('name & pwd is: ' + this.state.username + this.state.password);
-    if (this.state.logining) return;
-
-    this.setState({
-      logining: true,
-    });
-    console.log('submitLogin');
-    GHService.login(state.username, state.password);
-  },
-
-  onNameChange(text) {
-    this.setState({
-      username: text,
-    });
-  },
-
-  onPwdChange(text) {
-    this.setState({
-      password: text,
-    });
-  },
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return this.state.logining != nextState.logining;
-  },
-
-  render() {
-    let signInCp;
-    if (this.state.logining) {
-      signInCp = (
-        <ActivityIndicatorIOS
-          style={styles.indicator}
-          size="small"
-        />
-      )
-    }
-
-    return (
-      <View>
-        <View style={styles.loginCard}>
-          <View style={styles.up}>
-            <Text style={styles.introText}>
-              Sign in to Github
-            </Text>
-            {signInCp}
-          </View>
-          <View style={styles.down}>
-            <Text style={styles.nameAndPwd}>
-              Username or email
-            </Text>
-            <TextInput
-              style={styles.textInput}
-              returnKeyType={'next'}
-              onChangeText={this.onNameChange}
-              defaultValue={GHService.currentUser().username}
-            />
-            <Text style={styles.nameAndPwd}>
-              Password
-            </Text>
-            <TextInput
-              style={styles.textInput}
-              returnKeyType={'done'}
-              onSubmitEditing={this.submitLogin}
-              onChangeText={this.onPwdChange}
-              secureTextEntry={true}
-              defaultValue={GHService.currentUser().password}
-            />
-            <TouchableHighlight
-              style={styles.confirm}
-              onPress={this.submitLogin}
-              underlayColor={Colors.backGray}
-              >
-              <Text style={[styles.nameAndPwd, {'textAlign': 'center'}]}>
-                Sign in
-              </Text>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </View>
-    )
-  },
+  errorDesc: {
+    color: Colors.red,
+    alignSelf: 'center',
+    marginTop: 40,
+  }
 });
 
 module.exports = LoginComponent

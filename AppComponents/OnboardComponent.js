@@ -15,6 +15,103 @@ const {
   Image,
 } = React;
 
+const WEBVIEWREF = 'webview';
+
+const OnboardComponent = React.createClass({
+  propTypes: {
+    didOnboard: React.PropTypes.func,
+  },
+
+  getInitialState() {
+    return {
+      username: '',
+      loadingError: null,
+      loading: false,
+    }
+  },
+
+  submitOnboard() {
+    if (this.state.username.length == 0) return;
+
+    this.setState({
+      loadingError: null,
+      loading: true,
+    });
+    GHService.onboard(this.state.username)
+      .then(value => {
+        this.setState({
+          loading: false,
+        })
+
+        this.props.didOnboard && this.props.didOnboard(value);
+      })
+      .catch(err => {
+        this.setState({
+          loadingError: err,
+          loading: false,
+        });
+      })
+  },
+
+  onNameChange(text) {
+    this.setState({
+      username: text,
+    });
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    const loginErr = nextState.loadingError != this.state.loadingError;
+    const loading = nextState.loading != this.state.loading;
+
+    return loginErr || loading;
+  },
+
+  render() {
+    let failedDesc;
+    if (this.state.loadingError) {
+      failedDesc = (
+        <Text
+          style={{color: Colors.red}}>{this.state.loadingError.message}
+        </Text>
+      );
+    }
+    let loadingCp;
+    if (this.state.loading) {
+      loadingCp = <ActivityIndicatorIOS/>
+    }
+
+    return (
+      <View style={styles.container}>
+        <Image
+          style={styles.welcomeImage}
+          source={require('../AppIcons/ios/iTunesArtwork.png')}/>
+        <View style={styles.loginContainer}>
+          <TextInput
+            autoCapitalize={'none'}
+            autoCorrect={false}
+            style={styles.textInput}
+            returnKeyType={'done'}
+            onChangeText={this.onNameChange}
+            onSubmitEditing={this.submitOnboard}
+            placeholder={'your github username(NOT EMAIL)'}
+          />
+          <TouchableHighlight
+            style={styles.go}
+            onPress={this.submitOnboard}
+            underlayColor={Colors.backGray}
+            >
+              <Text style={[styles.nameAndPwd, {'textAlign': 'center'}]}>
+                Go!
+              </Text>
+          </TouchableHighlight>
+        </View>
+        {loadingCp}
+        {failedDesc}
+      </View>
+    )
+  },
+});
+
 const styles = StyleSheet.create({
   container: {
     top: 60,
@@ -49,7 +146,6 @@ const styles = StyleSheet.create({
     padding: 3,
     borderColor: Colors.borderColor,
     flex: 1,
-    textAlign: 'center',
   },
 
   go: {
@@ -70,60 +166,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
     width: 40,
-  },
-});
-
-const WEBVIEWREF = 'webview';
-
-const OnboardComponent = React.createClass({
-  getInitialState() {
-    return {
-      username: '',
-    }
-  },
-
-  submitOnboard() {
-    const state = this.state;
-    if (state.username.length == 0) return;
-
-    console.log('submitOnboard name is: ' + state.username);
-    GHService.onboard(state.username);
-  },
-
-  onNameChange(text) {
-    this.setState({
-      username: text,
-    });
-  },
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return false;
-  },
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <Image style={styles.welcomeImage} source={require('../AppIcons/ios/iTunesArtwork.png')}/>
-        <View style={styles.loginContainer}>
-          <TextInput
-            style={styles.textInput}
-            returnKeyType={'done'}
-            onChangeText={this.onNameChange}
-            onSubmitEditing={this.submitOnboard}
-            placeholder={'your github username(NOT EMAIL)'}
-          />
-          <TouchableHighlight
-            style={styles.go}
-            onPress={this.submitOnboard}
-            underlayColor={Colors.backGray}
-            >
-              <Text style={[styles.nameAndPwd, {'textAlign': 'center'}]}>
-                Go!
-              </Text>
-          </TouchableHighlight>
-        </View>
-      </View>
-    )
   },
 });
 

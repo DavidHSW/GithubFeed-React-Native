@@ -8,12 +8,10 @@
  */
 
 #import "AppDelegate.h"
-
 #import "RCTRootView.h"
-#import "NativePlayViewControllr.h"
-
 #include <ifaddrs.h>
 #include <arpa/inet.h>
+#import "JMWebResourceInterceptor.h"
 
 @implementation AppDelegate
 
@@ -48,8 +46,12 @@
   return address;
 }
 
+- (void)registerURLProtocol {
+  [[JMWebResourceInterceptor globalWebResourceInterceptor] setupDefaultWebResourceInterceptorSettings];
+}
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{  
+{
   NSURL *jsCodeLocation;
 
   /**
@@ -85,17 +87,17 @@
   jsCodeLocation = [NSURL URLWithString:ipAddress];
 
   
-//  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"gitfeed" withExtension:@"jsbundle"];
+  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 
   
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation moduleName:@"Github_RN" initialProperties:nil launchOptions:launchOptions];
+  
+  [self registerURLProtocol];
   
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [[UIViewController alloc] init];
   rootViewController.view = rootView;
   
-//  rootViewController = [NativePlayViewControllr new];
-
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   
