@@ -27,60 +27,7 @@ const {
  const ICON_SIZE = 18;
 
 const OrgComponent = React.createClass({
-<<<<<<< HEAD
 
-  render(){
-    return (
-      <View>
-        <View style = {{height:64}} />
-        <AboutComponent org={this.props.org}/>
-        <ScrollableTabView renderTabBar={() => <FacebookTabBar />}>
-          <RepoList tabLabel="ion|ios-paper" org={this.props.org}/>
-          <MemberList tabLabel="ion|person-stalker" org={this.props.org}/>
-        </ScrollableTabView>
-      </View>
-    )
-  }
-});
-
-const RepoList = React.createClass({
-  _detailOrg:{},
-
-  getInitialState() {
-    const dataSourceParam = {
-      rowHasChanged: (row1, row2) => row1 !== row2,
-      sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
-    }
-
-    return {
-      dataSource: new ListView.DataSource(dataSourceParam),
-      orgReposLoaded: false,
-    };
-  },
-
-  componentWillMount() {
-    this._detailOrg = this.props.org;
-    const orgURL = this._detailOrg.url;
-
-    GHService.fetchPromise(orgURL)
-      .then(res => {
-        const resOrg = JSON.parse(res._bodyInit);
-        const repoURL = resOrg.repos_url + '?sort=updated';
-        return GHService.fetchPromise(repoURL);
-      })
-      .then(res => {
-        const repos = JSON.parse(res._bodyInit);
-        this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(repos),
-          orgReposLoaded: true,
-        });
-      })
-      .catch(err => {console.log('promise err', err);});
-  },
-
-  renderRow(rowData, sectionID, rowID, highlightRow) {
-    return <RepoCell repo={rowData} navigator={this.props.navigator}/>
-=======
   PropTypes: {
     org: React.PropTypes.object,
   },
@@ -109,23 +56,10 @@ const RepoList = React.createClass({
 
   renderUserRow(rowData, sectionID, rowID, highlightRow) {
     return <UserCell key={rowID} user={rowData} navigator={this.props.navigator}/>;
->>>>>>> 51df17cda54d6567557f21afb267945b498bbd61
   },
 
   render() {
     return (
-<<<<<<< HEAD
-      <ListView
-        style={styles.container}
-        dataSource={this.state.dataSource}
-        renderRow={this.renderRow}
-        automaticallyAdjustContentInsets={false}
-        contentInset={{top: 0, left: 0, bottom: 49, right: 0}}
-        contentOffset={{x:0, y:0}}
-        scrollRenderAheadDistance={50}
-        >
-      </ListView>
-=======
       <View style={{backgroundColor: 'white', marginTop: 64, flex: 1}}>
         <AboutComponent user={this.props.org} navigator={this.props.navigator}/>
         <ScrollableTabView renderTabBar={() => <DefaultTabBar />}>
@@ -151,84 +85,10 @@ const RepoList = React.createClass({
           </GHRefreshListView>
         </ScrollableTabView>
       </View>
->>>>>>> 51df17cda54d6567557f21afb267945b498bbd61
     )
   }
 });
 
-<<<<<<< HEAD
-const MemberList = React.createClass({
-  _memberListURL:{},
-
-  getInitialState() {
-    return {
-      orgReposLoaded: false,
-    };
-  },
-
-  componentWillMount() {
-    const orgURL = this.props.org.url;
-
-    GHService.fetchPromise(orgURL)
-      .then(res => {
-        const resOrg = JSON.parse(res._bodyInit);
-        const cutIndex = resOrg.members_url.indexOf('{');
-        this._memberListURL = resOrg.members_url.substring(0,cutIndex);
-        this._memberListURL += '?sort=updated';
-        this.setState({
-          orgReposLoaded: true,
-        });
-      })
-      .catch(err => {console.log('promise err', err);});
-  },
-
-  render() {
-    if(this.state.orgReposLoaded){
-      return (
-        <UserListComponent userListURL = {this._memberListURL}/>
-        // <ListView
-        //   style={styles.container}
-        //   dataSource={this.state.dataSource}
-        //   renderRow={this.renderRow}
-        //   automaticallyAdjustContentInsets={false}
-        //   contentInset={{top: 0, left: 0, bottom: 49, right: 0}}
-        //   contentOffset={{x:0, y:-64}}
-        //   scrollRenderAheadDistance={50}
-        //   >
-        // </ListView>
-      )
-    }else {
-      return(
-        <ScrollView/>
-      );
-    }
-
-  }
-});
-
-const AboutComponent = React.createClass({
-  _detailOrg:{},
-
-  getInitialState(){
-    return {
-      orgDetailLoaded:false,
-    };
-  },
-
-  componentWillMount(){
-    this._detailOrg = this.props.org;
-    const orgURL = this._detailOrg.url;
-
-    GHService.fetchPromise(orgURL)
-      .then(res => {
-        const resOrg = JSON.parse(res._bodyInit);
-        this._detailOrg = Object.assign(this._detailOrg, resOrg);
-        this.setState({
-          orgDetailLoaded: true,
-        });
-      })
-      .catch(err => {console.log('promise err', err);});
-=======
 const AboutComponent = React.createClass({
   PropTypes: {
     user: React.PropTypes.object,
@@ -243,7 +103,6 @@ const AboutComponent = React.createClass({
   onPressEmail() {
     console.log('press email');
   },
->>>>>>> 51df17cda54d6567557f21afb267945b498bbd61
 
   onPressBlog() {
     const blog = {
@@ -253,18 +112,6 @@ const AboutComponent = React.createClass({
     this.props.navigator.push({id: 'web', obj: blog})
   },
 
-<<<<<<< HEAD
-  onPressEmail() {
-    console.log('press email');
-  },
-
-  onPressBlog() {
-
-  },
-
-  render() {
-    const org = this._detailOrg;
-=======
   componentDidMount() {
     GHService.fetchPromise(this.props.user.url)
       .then(value => {
@@ -278,7 +125,6 @@ const AboutComponent = React.createClass({
 
   render() {
     const user = this.state.user;
->>>>>>> 51df17cda54d6567557f21afb267945b498bbd61
 
     let orgCompany;
     if (org.company) {
@@ -337,9 +183,6 @@ const AboutComponent = React.createClass({
           <Text
             style={styles.profileInfoEmailAndSite}
             onPress={this.onPressBlog}
-<<<<<<< HEAD
-            >{org.blog}</Text>
-=======
             >{user.blog}</Text>
         </View>
       )
@@ -357,7 +200,6 @@ const AboutComponent = React.createClass({
             style={styles.icon}
             color={Colors.textGray}/>
           <Text style={styles.profileInfoLocation}>{joined}</Text>
->>>>>>> 51df17cda54d6567557f21afb267945b498bbd61
         </View>
       )
     }
@@ -367,14 +209,6 @@ const AboutComponent = React.createClass({
         <View style={styles.profile}>
           <Image style={styles.profileImage} source={{uri: org.avatar_url}}/>
           <View style={styles.profileInfo}>
-<<<<<<< HEAD
-            <Text style={styles.profileInfoName}>{org.name}</Text>
-            <Text style={styles.profileInfoNickName}>{org.login}</Text>
-            {orgCompany}
-            {orgLocation}
-            {orgEmail}
-            {orgBlog}
-=======
             <Text style={styles.profileInfoName}>{user.name}</Text>
             <Text style={styles.profileInfoNickName}>{user.login}</Text>
             {userCompany}
@@ -382,43 +216,14 @@ const AboutComponent = React.createClass({
             {userEmail}
             {userBlog}
             {userJoined}
->>>>>>> 51df17cda54d6567557f21afb267945b498bbd61
           </View>
         </View>
       </View>
    )
   }
 });
-<<<<<<< HEAD
-
-// const OrgTabBar = React.createClass({
-//   render() {
-//     return (
-//       <View style={styles.tabs}>
-//         <TouchableOpacity>
-//             <View><Text>t1</Text></View>
-//         </TouchableOpacity>
-//         <TouchableOpacity>
-//             <View><Text>t2</Text></View>
-//         </TouchableOpacity>
-//       </View>
-//    )
-//   }
-// });
-=======
->>>>>>> 51df17cda54d6567557f21afb267945b498bbd61
 
 var styles = StyleSheet.create({
-  // tabs: {
-  //   height: 45,
-  //   flexDirection: 'row',
-  //   paddingTop: 5,
-  //   borderWidth: 1,
-  //   borderTopWidth: 0,
-  //   borderLeftWidth: 0,
-  //   borderRightWidth: 0,
-  //   borderBottomColor: 'rgba(0,0,0,0.05)',
-  // },
   icon: {
     width: ICON_SIZE,
     height: ICON_SIZE,
@@ -431,11 +236,6 @@ var styles = StyleSheet.create({
   scvContainerStyle: {
     justifyContent: 'flex-start',
     flexDirection: 'column',
-<<<<<<< HEAD
-    flex: 1,
-    backgroundColor:'lightGray',
-=======
->>>>>>> 51df17cda54d6567557f21afb267945b498bbd61
   },
   iconTextContainer: {
     flexDirection: 'row',
@@ -481,8 +281,4 @@ var styles = StyleSheet.create({
   },
 });
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 51df17cda54d6567557f21afb267945b498bbd61
 module.exports = OrgComponent;
